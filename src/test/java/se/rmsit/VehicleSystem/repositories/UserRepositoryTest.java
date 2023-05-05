@@ -3,8 +3,8 @@ package se.rmsit.VehicleSystem.repositories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.Configuration;
-import se.rmsit.VehicleSystem.JsonFileWriter;
-import se.rmsit.VehicleSystem.entities.Customer;
+import se.rmsit.VehicleSystem.FileHandler;
+import se.rmsit.VehicleSystem.UserType;
 import se.rmsit.VehicleSystem.entities.User;
 
 import java.io.File;
@@ -25,7 +25,7 @@ class UserRepositoryTest {
 //				System.out.println(file.delete());
 			}
 		}
-		JsonFileWriter.createDataFolders();
+		FileHandler.createDataFolders();
 
 		userRepository = new UserRepository();
 	}
@@ -41,7 +41,7 @@ class UserRepositoryTest {
 
 	private class TestUser extends User {
 		public TestUser(long userId, String username, String email, String hashedPassword) {
-			super(userId, username, email, hashedPassword);
+			super(userId, username, email, hashedPassword, UserType.CUSTOMER);
 		}
 	}
 }

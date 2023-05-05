@@ -1,11 +1,9 @@
 package se.rmsit.VehicleSystem.repositories;
 
-import com.google.gson.Gson;
 import se.rmsit.VehicleSystem.Configuration;
-import se.rmsit.VehicleSystem.JsonFileWriter;
+import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.entities.User;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,21 +27,21 @@ public class UserRepository {
 //		}
 	}
 
-	public Optional getById(long id) {
+	public Optional<User> getById(long id) {
 		return Optional.empty();
 	}
 
-	public Optional getByName(String name) {
+	public Optional<User> getByName(String name) {
 		return Optional.empty();
 	}
 
-	public List getAll() {
+	public List<User> getAll() {
 		return null;
 	}
 
 	public void update(User user) throws IOException {
-		File userFile = new File(Configuration.getProperty("data_directory")+"\\users\\"+user.getUserId()+".json");
-		JsonFileWriter.writeJson(user, userFile);
+//		File userFile = new File(Configuration.getProperty("data_directory")+"\\users\\"+user.getId()+".json");
+//		FileHandler.writeJson(user, userFile);
 	}
 
 	public void delete(User user) {

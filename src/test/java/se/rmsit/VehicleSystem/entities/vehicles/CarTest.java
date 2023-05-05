@@ -2,6 +2,7 @@ package se.rmsit.VehicleSystem.entities.vehicles;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import se.rmsit.VehicleSystem.UserType;
 import se.rmsit.VehicleSystem.entities.User;
 
 import java.util.Calendar;
@@ -43,7 +44,7 @@ class CarTest {
 
 	private class TestUser extends User {
 		public TestUser() {
-			super(1, "Test", "test@testing.se", "test");
+			super(1, "Test", "test@testing.se", "test", UserType.CUSTOMER);
 		}
 	}
 }
