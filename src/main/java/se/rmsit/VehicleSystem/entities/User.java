@@ -75,6 +75,17 @@ public class User implements Loginable, Fetchable {
 		return Objects.equals(hashedPassword, user.hashedPassword);
 	}
 
+	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", email='" + email + '\'' +
+				", hashedPassword='" + hashedPassword + '\'' +
+				", userType=" + userType +
+				'}';
+	}
+
 	// Getters and setters
 	@Override
 	public long getId() {
