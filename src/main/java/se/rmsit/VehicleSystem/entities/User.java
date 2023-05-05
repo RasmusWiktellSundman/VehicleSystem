@@ -1,6 +1,6 @@
 package se.rmsit.VehicleSystem.entities;
 
-import se.rmsit.VehicleSystem.Loginable;
+import se.rmsit.VehicleSystem.authentication.Loginable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,11 +13,6 @@ public abstract class User implements Loginable, Fetchable {
 	private String lastName;
 	private String email;
 	private String hashedPassword;
-
-	@Override
-	public User login(String userNameOrEmail, String password) {
-		return null;
-	}
 
 	/**
 	 * Standard konstruktor, används för att skapa objekt från persistent lagring.
