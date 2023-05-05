@@ -13,7 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class RegisterVehicle extends PanelContainer {
+public class RegisterVehiclePanel extends PanelContainer {
 	private final Authentication authentication;
 	private JComboBox vehicleType;
 	private JPanel panel;
@@ -27,7 +27,7 @@ public class RegisterVehicle extends PanelContainer {
 	private JSpinner wheelSpinner;
 	private JLabel success;
 
-	public RegisterVehicle(Authentication authentication) {
+	public RegisterVehiclePanel(Authentication authentication) {
 		this.authentication = authentication;
 
 		registerVehicleBtn.addActionListener(e -> {

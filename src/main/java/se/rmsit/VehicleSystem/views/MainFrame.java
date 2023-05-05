@@ -57,7 +57,7 @@ public class MainFrame extends JFrame {
 		panelContainers.put(Panels.LOGIN, new LoginPanel(this, authentication));
 		panelContainers.put(Panels.REGISTER_CUSTOMER, new RegisterCustomerPanel());
 		panelContainers.put(Panels.VEHICLES, new VehiclesPanel(authentication));
-		panelContainers.put(Panels.REGISTER_VEHICLE, new RegisterVehicle(authentication));
+		panelContainers.put(Panels.REGISTER_VEHICLE, new RegisterVehiclePanel(authentication));
 		panelContainers.forEach((panel, panelContainer) -> content.add(panelContainer.getPanel(), panel.name()));
 		setContentPanel(Panels.LOGIN);
 
