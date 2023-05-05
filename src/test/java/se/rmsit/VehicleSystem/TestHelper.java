@@ -10,11 +10,13 @@ public class TestHelper {
 		// Remove test data directory
 		File dataFolder = new File(Configuration.getProperty("data_directory"));
 		if(dataFolder.exists()) {
-			for (File directories : dataFolder.listFiles()) {
-				if (directories.isDirectory()) {
-					for (File file : directories.listFiles()) {
+			for (File directoriesAndFiles : dataFolder.listFiles()) {
+				if (directoriesAndFiles.isDirectory()) {
+					for (File file : directoriesAndFiles.listFiles()) {
 						Files.delete(Path.of(file.toURI()));
 					}
+				} else {
+					Files.delete(Path.of(directoriesAndFiles.toURI()));
 				}
 			}
 		}
