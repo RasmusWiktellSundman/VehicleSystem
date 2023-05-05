@@ -14,20 +14,20 @@ class CarTest {
 	@BeforeEach
 	void setUp() {
 		Calendar today = Calendar.getInstance();
-		car = new Car(new Customer(), "ABC123", 4, 4, today, (Calendar) today.clone(), 50000);
+		car = new Car(new Customer(), "ABC123", 4, 4, today, (Calendar) today.clone(), 50000, "something");
 	}
 
 	@Test
 	void throwsOnNegativeMaxPassengers() {
 		Calendar today = Calendar.getInstance();
-		assertThrows(IllegalArgumentException.class, () -> new Car(new Customer(), "ABC123", -1, 4, today, (Calendar) today.clone(), 10));
+		assertThrows(IllegalArgumentException.class, () -> new Car(new Customer(), "ABC123", -1, 4, today, (Calendar) today.clone(), 10, "something"));
 		assertThrows(IllegalArgumentException.class, () -> car.setMaximumPassengers(-1));
 	}
 
 	@Test
 	void throwsOnNegativeWheels() {
 		Calendar today = Calendar.getInstance();
-		assertThrows(IllegalArgumentException.class, () -> new Car(new Customer(), "ABC123", 1, -4, today, (Calendar) today.clone(), 10));
+		assertThrows(IllegalArgumentException.class, () -> new Car(new Customer(), "ABC123", 1, -4, today, (Calendar) today.clone(), 10, "something"));
 		assertThrows(IllegalArgumentException.class, () -> car.setWheels(-1));
 	}
 
@@ -37,7 +37,7 @@ class CarTest {
 		Calendar yesterday = Calendar.getInstance();
 		yesterday.add(Calendar.DATE, -1);
 
-		assertThrows(IllegalArgumentException.class, () -> new Car(new Customer(), "abc", 1, 4, today, yesterday, 10));
+		assertThrows(IllegalArgumentException.class, () -> new Car(new Customer(), "abc", 1, 4, today, yesterday, 10, "something"));
 		assertThrows(IllegalArgumentException.class, () -> car.setBoughtDate(yesterday));
 	}
 }

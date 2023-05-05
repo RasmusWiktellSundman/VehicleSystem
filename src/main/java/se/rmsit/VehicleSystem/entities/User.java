@@ -47,11 +47,11 @@ public abstract class User implements Fetchable {
 	}
 
 	public User(String userId, String firstName, String lastName, String email, String hashedPassword) {
-		this.id = userId;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.email = email;
-		this.hashedPassword = hashedPassword;
+		setId(userId);
+		setFirstName(firstName);
+		setLastName(lastName);
+		setEmail(email);
+		setHashedPassword(hashedPassword);
 	}
 
 	public static User getById(String id) throws IOException {
@@ -153,6 +153,9 @@ public abstract class User implements Fetchable {
 	}
 
 	public void setId(String id) {
+		if(id == null) {
+			throw new IllegalArgumentException("ID can't be null");
+		}
 		this.id = id;
 	}
 
@@ -161,6 +164,9 @@ public abstract class User implements Fetchable {
 	}
 
 	public void setFirstName(String firstName) {
+		if(firstName == null) {
+			throw new IllegalArgumentException("First name can't be null");
+		}
 		this.firstName = firstName;
 	}
 
@@ -177,7 +183,13 @@ public abstract class User implements Fetchable {
 	}
 
 	public void setEmail(String email) {
-		//TODO: Validera format
+		// Validerar email format
+		if(email == null) {
+			throw new IllegalArgumentException("Email can't be null");
+		}
+		if(!email.matches("^[A-Za-z0-9+åäöÅÄÖ_.-]+@[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$")) {
+			throw new IllegalArgumentException("Ogiltig e-postadress");
+		}
 		this.email = email;
 	}
 
@@ -186,6 +198,9 @@ public abstract class User implements Fetchable {
 	}
 
 	public void setHashedPassword(String hashedPassword) {
+		if(hashedPassword == null) {
+			throw new IllegalArgumentException("Password can't be null");
+		}
 		this.hashedPassword = hashedPassword;
 	}
 }

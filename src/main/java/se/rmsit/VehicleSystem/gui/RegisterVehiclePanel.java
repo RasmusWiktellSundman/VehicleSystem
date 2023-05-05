@@ -4,6 +4,7 @@ import se.rmsit.VehicleSystem.authentication.Authentication;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.entities.vehicles.Car;
+import se.rmsit.VehicleSystem.entities.vehicles.Motorcycle;
 import se.rmsit.VehicleSystem.entities.vehicles.Vehicle;
 import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
 
@@ -31,8 +32,9 @@ public class RegisterVehiclePanel extends PanelContainer {
 		this.authentication = authentication;
 
 		registerVehicleBtn.addActionListener(e -> {
-			// Återställer felmeddelanden
+			// Återställer felmeddelanden och framgångsmeddelande
 			error.setVisible(false);
+			success.setVisible(false);
 
 			// Konverterar datum till Calendar objekt
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -61,8 +63,8 @@ public class RegisterVehiclePanel extends PanelContainer {
 				}
 
 				// Skapar ny bil
-				if(vehicleType.getSelectedItem().equals("Bil")) {
-					try {
+				try {
+					if(vehicleType.getSelectedItem().equals("Bil")) {
 						Car car = new Car(
 								customer,
 								registrationNumberField.getText(),
@@ -70,14 +72,27 @@ public class RegisterVehiclePanel extends PanelContainer {
 								(int) wheelSpinner.getValue(),
 								constructionDate,
 								boughtDate,
-								(int) purchasePriceSpinner.getValue()
+								(int) purchasePriceSpinner.getValue(),
+								customer.getAddress()
 						);
 						car.save();
-					} catch (IllegalArgumentException ex) {
-						error.setText(ex.getMessage());
-						error.setVisible(true);
-						return;
+					} else if(vehicleType.getSelectedItem().equals("Motorcykel")) {
+						Motorcycle motorcycle = new Motorcycle(
+								customer,
+								registrationNumberField.getText(),
+								(int) maximumPassengersSpinner.getValue(),
+								(int) wheelSpinner.getValue(),
+								constructionDate,
+								boughtDate,
+								(int) purchasePriceSpinner.getValue(),
+								customer.getAddress()
+						);
+						motorcycle.save();
 					}
+				} catch (IllegalArgumentException ex) {
+					error.setText(ex.getMessage());
+					error.setVisible(true);
+					return;
 				}
 
 				// Lyckades skapa fordon

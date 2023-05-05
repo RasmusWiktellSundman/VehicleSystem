@@ -99,4 +99,11 @@ class UserTest {
 		assertEquals(expected1, testUser1);
 		assertEquals(expected2, testUser2);
 	}
+
+	@Test
+	void cantUseInvalidEmail() {
+		assertThrows(IllegalArgumentException.class, () -> new TestUser("Testing", "something", "test.se", "password"));
+		assertDoesNotThrow(() -> new TestUser("Testing", "something", "testTesting@test.se", "password"));
+		assertDoesNotThrow(() -> new TestUser("Testing", "something", "testTestingåäöÅÄÖ@test.se", "password"));
+	}
 }
