@@ -6,9 +6,11 @@ import se.rmsit.VehicleSystem.Configuration;
 import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.TestHelper;
 import se.rmsit.VehicleSystem.TestUser;
+import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,25 +23,54 @@ class UserTest {
 	@Test
 	void canStoreUser() {
 		User user = new TestUser("1", "Test", "something", "test@testin.se", "no_hashing");
-		assertDoesNotThrow(() -> FileHandler.storeObject(user, "users"));
+		assertDoesNotThrow(user::save);
 		assertTrue(new File(Configuration.getProperty("data_directory")+"/users/1.txt").exists());
 	}
 
 	@Test
-	void canLoadUser() throws IOException {
-		User user = new TestUser("1", "Test", "something", "test@testin.se", "no_hashing");
-		assertDoesNotThrow(() -> FileHandler.storeObject(user, "users"));
-		assertEquals(user, FileHandler.loadObject(new TestUser(), "1","users"));
+	void canGetUserFromStorage() throws IOException {
+		User expected = new TestUser("1", "Test", "something", "test@testin.se", "no_hashing");
+		expected.save();
 
-		User admin = new TestUser("2", "AdminTest", "something", "admin@testin.se", "no_hashing");
-		assertDoesNotThrow(() -> FileHandler.storeObject(admin, "users"));
-		assertEquals(admin, FileHandler.loadObject(new TestUser(), "2","users"));
+		assertEquals(expected, User.getById("1"));
+	}
+
+	@Test
+	void canGetUserByEmail() throws IOException {
+		User expected = new TestUser("1", "Test", "something", "test@testin.se", "no_hashing");
+		expected.save();
+
+		assertEquals(expected, User.getByEmail("test@testin.se"));
 	}
 
 	@Test
 	void canLoadUserWithNullValue() throws IOException {
 		User user = new TestUser("1", "Test", null, "test@testin.se", "no_hashing");
-		assertDoesNotThrow(() -> FileHandler.storeObject(user, "users"));
-		assertEquals(user, FileHandler.loadObject(new TestUser(), "1","users"));
+		assertDoesNotThrow(user::save);
+		assertEquals(user, User.getById("1"));
+	}
+
+	@Test
+	void canUpdateUser() throws IOException {
+		User user = new TestUser("1", "Test", null, "test@testin.se", "no_hashing");
+		assertDoesNotThrow(user::save);
+		assertEquals(user, User.getById("1"));
+
+		user.setEmail("test2@testin.se");
+		user.setFirstName("Hello");
+		user.save();
+
+		assertEquals(user, User.getById("1"));
+	}
+
+	@Test
+	void canDeleteUser() throws IOException {
+		User testUser = new TestUser("1", "Test", "something", "test@testing.se", "aHash");
+		User testUser2 = new TestUser("2", "Test2", "something", "test2@testing.se", "aHash");
+		testUser.save();
+		testUser2.save();
+		assertDoesNotThrow(testUser::delete);
+		assertNull(User.getById("1"));
+		assertFalse(new File(Configuration.getProperty("data_directory")+"/users/1.txt").exists());
 	}
 }

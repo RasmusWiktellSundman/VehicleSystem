@@ -1,8 +1,11 @@
 package se.rmsit.VehicleSystem.entities;
 
+import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.authentication.Loginable;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class User extends Entity implements Loginable {
@@ -24,6 +27,26 @@ public abstract class User extends Entity implements Loginable {
 		this.email = email;
 		this.hashedPassword = hashedPassword;
 	}
+
+	public static User getById(String id) throws IOException {
+		// Hämtar användare från persistent lagring
+		return (User) FileHandler.loadObject(id, "users");
+	}
+
+	public static User getByEmail(String email) throws IOException {
+		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
+			// Kollar om e-posten från den inlästa användaren är samma som den givna e-posten
+			if(((User) fetchable).getEmail().equals(email)) {
+				return (User) fetchable;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Raderar användaren från persistent lagring
+	 */
+
 
 	/**
 	 * Laddar in ett nyckel-värde par till objektet
@@ -115,5 +138,17 @@ public abstract class User extends Entity implements Loginable {
 
 	public void setHashedPassword(String hashedPassword) {
 		this.hashedPassword = hashedPassword;
+	}
+
+	/**
+	 * Sparar objektet till persistent lagring. Skriver över ifall användare med samma id redan finns.
+	 * @throws IOException
+	 */
+	public void save() throws IOException {
+		FileHandler.storeObject(this, "users");
+	}
+
+	public void delete() throws IOException {
+		FileHandler.deleteObject(getId(), "users");
 	}
 }

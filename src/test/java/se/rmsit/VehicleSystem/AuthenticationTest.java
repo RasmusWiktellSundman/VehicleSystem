@@ -7,7 +7,6 @@ import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
 import se.rmsit.VehicleSystem.exceptions.InvalidLoginCredentials;
 import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
-import se.rmsit.VehicleSystem.repositories.UserRepository;
 
 import java.io.IOException;
 
@@ -16,21 +15,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AuthenticationTest {
-	private UserRepository userRepository;
 	private Authentication authentication;
 
 	@BeforeEach
 	void setup() throws IOException {
 		TestHelper.resetDataFiles();
-		userRepository = new UserRepository();
-		authentication = new Authentication(userRepository);
+		authentication = new Authentication();
 	}
 
 	@Test
 	void canLogin() throws DuplicateEntityException, IOException, InvalidLoginCredentials {
 		// Skapar ny användare
 		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
-		userRepository.update(user);
+		user.save();
 
 		assertEquals(user, authentication.login("test@testing.se", "a_password"));
 	}
@@ -39,7 +36,7 @@ class AuthenticationTest {
 	void throwsOnInvalidCredentials() throws DuplicateEntityException, IOException {
 		// Skapar ny användare
 		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
-		userRepository.update(user);
+		user.save();
 
 		// Felaktig lösenord
 		assertThrows(InvalidLoginCredentials.class, () -> authentication.login("test@testing.se", "a_wrong_password"));
@@ -52,7 +49,7 @@ class AuthenticationTest {
 	void canGetLoggedInUser() throws InvalidLoginCredentials, DuplicateEntityException, IOException, NoLoggedInUser {
 		// Skapar ny användare
 		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
-		userRepository.update(user);
+		user.save();
 
 		// Loggar in användare
 		authentication.login("test@testing.se", "a_password");
@@ -64,7 +61,7 @@ class AuthenticationTest {
 	void cantGetLoggedInUserWhenNotLoggedIn() throws DuplicateEntityException, IOException {
 		// Skapar ny användare
 		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
-		userRepository.update(user);
+		user.save();
 
 		assertThrows(NoLoggedInUser.class, () -> authentication.getUser());
 	}
@@ -73,7 +70,7 @@ class AuthenticationTest {
 	void canLogOut() throws InvalidLoginCredentials, DuplicateEntityException, IOException, NoLoggedInUser {
 		// Skapar ny användare
 		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
-		userRepository.update(user);
+		user.save();
 
 		// Loggar in användare
 		authentication.login("test@testing.se", "a_password");

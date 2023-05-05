@@ -2,7 +2,6 @@ package se.rmsit.VehicleSystem;
 
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.entities.vehicles.Vehicle;
-import se.rmsit.VehicleSystem.repositories.UserRepository;
 
 import java.util.Calendar;
 

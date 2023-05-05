@@ -8,7 +8,6 @@ import se.rmsit.VehicleSystem.TestHelper;
 import se.rmsit.VehicleSystem.TestUser;
 import se.rmsit.VehicleSystem.TestVehicle;
 import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
-import se.rmsit.VehicleSystem.repositories.UserRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VehicleTest {
 	TestUser testUser;
-	UserRepository userRepository;
 	@BeforeEach
 	void setup() throws IOException, DuplicateEntityException {
 		TestHelper.resetDataFiles();
-		userRepository = new UserRepository();
 		testUser = new TestUser("1", "dsa", "dasd", "test@testomg.se", "something");
-		userRepository.update(testUser);
+		testUser.save();
 	}
 
 	@Test

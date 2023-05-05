@@ -3,16 +3,11 @@ package se.rmsit.VehicleSystem.entities.vehicles;
 import se.rmsit.VehicleSystem.entities.Entity;
 import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.User;
-import se.rmsit.VehicleSystem.repositories.UserRepository;
 
 import java.util.Calendar;
 import java.util.Objects;
 
 public abstract class Vehicle extends Entity implements Fetchable {
-	/**
-	 * Används endast för att initiera fordon från persistent lagring
-	 */
-	private UserRepository userRepository;
 	// Används av VehicleRepository för att hämta User objekt
 	private String ownerId;
 	private User owner;

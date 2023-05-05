@@ -21,16 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class VehicleRepositoryTest {
 
 	private TestUser testUser;
-	private UserRepository userRepository;
 	private VehicleRepository vehicleRepository;
 
 	@BeforeEach
-	void setup() throws IOException, DuplicateEntityException {
+	void setup() throws IOException {
 		TestHelper.resetDataFiles();
-		userRepository = new UserRepository();
 		testUser = new TestUser("1", "dsa", "dasd", "test@testomg.se", "something");
-		userRepository.update(testUser);
-		vehicleRepository = new VehicleRepository(userRepository);
+		testUser.save();
+		vehicleRepository = new VehicleRepository();
 	}
 
 	@Test
@@ -79,8 +77,8 @@ class VehicleRepositoryTest {
 		vehicleRepository.update(testVehicle2);
 
 		assertDoesNotThrow(() -> vehicleRepository.delete(testVehicle2));
-		assertFalse(userRepository.getAll().contains(testVehicle2));
-		assertTrue(() -> userRepository.getById("ABC124").isEmpty());
+		assertFalse(vehicleRepository.getAll().contains(testVehicle2));
+		assertTrue(() -> vehicleRepository.getByRegistrationNumber("ABC124").isEmpty());
 		assertFalse(new File(Configuration.getProperty("data_directory")+"/vehicles/ABC124.txt").exists());
 	}
 
@@ -93,7 +91,7 @@ class VehicleRepositoryTest {
 		vehicleRepository.update(testVehicle2);
 
 		// Skapar nytt repository för att ladda in från fil
-		vehicleRepository = new VehicleRepository(userRepository);
+		vehicleRepository = new VehicleRepository();
 
 		List<Vehicle> expected = List.of(testVehicle, testVehicle2);
 		assertIterableEquals(expected, vehicleRepository.getAll());
@@ -102,7 +100,7 @@ class VehicleRepositoryTest {
 	@Test
 	void canGetVehiclesByOwner() throws DuplicateEntityException, IOException {
 		User testUser2 = new TestUser("2", "Test2", "something", "test2@testing.se", "aHash");
-		userRepository.update(testUser2);
+		testUser2.save();
 
 		// Skapar fordon
 		Calendar today = Calendar.getInstance();

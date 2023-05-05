@@ -1,5 +1,7 @@
 package se.rmsit.VehicleSystem.entities;
 
+import se.rmsit.VehicleSystem.FileHandler;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 

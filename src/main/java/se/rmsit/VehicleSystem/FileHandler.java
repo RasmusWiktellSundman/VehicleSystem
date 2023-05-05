@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileHandler {
@@ -52,9 +53,55 @@ public class FileHandler {
 		return loadObject(fetchable, id, "users");
 	}
 
+	/**
+	 * Laddar in objekt, hämtar objekt typ från class: i presistent lagring.
+	 * @param id Id:t av objektet att ladda in
+	 * @param subPath Undermapp objektet är lagrat under
+	 * @return Inläst objekt
+	 * @throws IOException
+	 */
+	public static Fetchable loadObject(String id, String subPath) throws IOException {
+		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
+
+			// Skapar objekt utifrån klass i datafil
+			// Första raden ska följa formatet class: klass-namn
+			// Skapar nytt objekt från clazz
+			//TODO: Kolla att den innehåller class:
+			String className = reader.readLine().split(" ")[1];
+			Class clazz = Class.forName(className);
+			Constructor constructor = clazz.getConstructor();
+			Fetchable fetchable = (Fetchable) constructor.newInstance();
+
+			// Läser in data från filen och sparar i objektet
+			fetchable.load(reader);
+			return fetchable;
+		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Missing default constructor");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Invalid class in data-file, " + file.getPath());
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+
+
+	}
+
 	public static void deleteObject(String id, String subPath) throws IOException {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
 		Files.delete(Path.of(file.toURI()));
+	}
+
+	/**
+	 * Returnerar en lista på id:n för alla lagrade objekt inom en mapp
+	 * @param subPath Mappen att söka igenom
+	 * @return
+	 */
+	public static List<String> listObjectIds(String subPath) {
+		File directory = new File(dataDirectoryPath+"\\"+subPath);
+		return Arrays.stream(directory.list()).map(s -> s.replace(".txt", "")).toList();
 	}
 
 	public static List<Fetchable> getAllObjects(String subPath) throws IOException {

@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class VehicleRepository {
-	private UserRepository userRepository;
 	private List<Vehicle> vehicles = new ArrayList<>();
 
-	public VehicleRepository(UserRepository userRepository) throws IOException {
-		this.userRepository = userRepository;
+	public VehicleRepository() throws IOException {
 		loadVehicles();
 	}
 
@@ -24,7 +22,7 @@ public class VehicleRepository {
 		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
 			if(fetchable instanceof Vehicle) {
 				Vehicle vehicle = (Vehicle) fetchable;
-				vehicle.setOwner(userRepository.getById(vehicle.getOwnerId()).get());
+				vehicle.setOwner(User.getById(vehicle.getOwnerId()));
 				vehicles.add(vehicle);
 			}
 		}

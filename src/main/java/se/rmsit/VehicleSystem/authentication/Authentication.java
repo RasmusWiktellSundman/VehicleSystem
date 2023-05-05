@@ -3,21 +3,21 @@ package se.rmsit.VehicleSystem.authentication;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.exceptions.InvalidLoginCredentials;
 import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
-import se.rmsit.VehicleSystem.repositories.UserRepository;
+
+import java.io.IOException;
 
 public class Authentication {
-	private static Authentication single_instance;
-	private UserRepository userRepository;
 	private Loginable loggedInUser;
 
 
 	// Auth klassen följer singleton designmönstret
-	public Authentication(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+	public Authentication() {}
 
-	public Loginable login(String email, String password) throws InvalidLoginCredentials {
-		User user = userRepository.getByEmail(email).orElseThrow(InvalidLoginCredentials::new);
+	public Loginable login(String email, String password) throws InvalidLoginCredentials, IOException {
+		User user = User.getByEmail(email);
+		if(user == null) {
+			throw new InvalidLoginCredentials();
+		}
 		if(user.getHashedPassword().equals(password)) {
 			loggedInUser = user;
 			return user;
