@@ -17,5 +17,5 @@ public interface Fetchable {
 	 * @param reader BufferedReader med data att skapa object från.
 	 */
 	void load(BufferedReader reader) throws IOException;
-	long getId();
+	String getId();
 }

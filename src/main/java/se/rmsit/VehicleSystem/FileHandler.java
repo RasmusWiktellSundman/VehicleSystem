@@ -40,7 +40,7 @@ public class FileHandler {
 		storeObject(object, "");
 	}
 
-	public static Fetchable loadObject(Fetchable fetchable, long id, String subPath) throws IOException {
+	public static Fetchable loadObject(Fetchable fetchable, String id, String subPath) throws IOException {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			fetchable.load(reader);
@@ -48,11 +48,11 @@ public class FileHandler {
 		}
 	}
 
-	public static Fetchable loadObject(Fetchable fetchable, long id) throws IOException {
+	public static Fetchable loadObject(Fetchable fetchable, String id) throws IOException {
 		return loadObject(fetchable, id, "users");
 	}
 
-	public static void deleteObject(long id, String subPath) throws IOException {
+	public static void deleteObject(String id, String subPath) throws IOException {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
 		Files.delete(Path.of(file.toURI()));
 	}

@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.Objects;
 
 public abstract class User implements Loginable, Fetchable {
-	private long id;
+	private String id;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -19,7 +19,7 @@ public abstract class User implements Loginable, Fetchable {
 	 */
 	public User() {}
 
-	public User(long userId, String firstName, String lastName, String email, String hashedPassword) {
+	public User(String userId, String firstName, String lastName, String email, String hashedPassword) {
 		this.id = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -42,7 +42,7 @@ public abstract class User implements Loginable, Fetchable {
 				data = null;
 			}
 			switch (tokens[0]) {
-				case "user_id" -> setId(Long.parseLong(data));
+				case "user_id" -> setId(data);
 				case "first_name" -> setFirstName(data);
 				case "last_name" -> setLastName(data);
 				case "email" -> setEmail(data);
@@ -67,7 +67,7 @@ public abstract class User implements Loginable, Fetchable {
 		if (customer == null || getClass() != customer.getClass()) return false;
 
 		User user = (User) customer;
-		if (id != user.id) return false;
+		if (!Objects.equals(id, user.id)) return false;
 		if (!Objects.equals(firstName, user.firstName)) return false;
 		if (!Objects.equals(lastName, user.lastName)) return false;
 		if (!Objects.equals(email, user.email)) return false;
@@ -87,11 +87,11 @@ public abstract class User implements Loginable, Fetchable {
 
 	// Getters and setters
 	@Override
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

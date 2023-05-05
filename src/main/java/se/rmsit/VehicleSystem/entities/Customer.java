@@ -21,7 +21,7 @@ public class Customer extends User {
 	 */
 	public Customer() {}
 
-	public Customer(long customerId, String firstName, String lastName, String address, String postTown, String postcode, String phoneNumber, boolean isPublicAuthority, String email, String hashedPassword) {
+	public Customer(String customerId, String firstName, String lastName, String address, String postTown, String postcode, String phoneNumber, boolean isPublicAuthority, String email, String hashedPassword) {
 		super(customerId, firstName, lastName, email, hashedPassword);
 		setAddress(address);
 		setPostTown(postTown);
@@ -55,7 +55,7 @@ public class Customer extends User {
 				data = null;
 			}
 			switch (tokens[0]) {
-				case "user_id" -> setId(Long.parseLong(data));
+				case "user_id" -> setId(data);
 				case "first_name" -> setFirstName(data);
 				case "last_name" -> setLastName(data);
 				case "email" -> setEmail(data);
@@ -100,7 +100,7 @@ public class Customer extends User {
 				'}';
 	}
 
-	public long getCustomerId() {
+	public String getCustomerId() {
 		return getId();
 	}
 

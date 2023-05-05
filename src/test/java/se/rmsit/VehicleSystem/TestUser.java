@@ -8,7 +8,7 @@ import se.rmsit.VehicleSystem.entities.User;
 public class TestUser extends User {
 	public TestUser() {}
 
-	public TestUser(long userId, String firstName, String lastName, String email, String hashedPassword) {
+	public TestUser(String userId, String firstName, String lastName, String email, String hashedPassword) {
 		super(userId, firstName, lastName, email, hashedPassword);
 	}
 }

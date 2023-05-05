@@ -30,9 +30,9 @@ public class UserRepository {
 		}
 	}
 
-	public Optional<User> getById(long id) {
+	public Optional<User> getById(String id) {
 		for (User user : users) {
-			if(user.getId() == id) {
+			if(user.getId().equals(id)) {
 				return Optional.of(user);
 			}
 		}

@@ -29,7 +29,7 @@ class AuthenticationTest {
 	@Test
 	void canLogin() throws DuplicateEntityException, IOException, InvalidLoginCredentials {
 		// Skapar ny användare
-		User user = new TestUser(1, "Test", null, "test@testing.se", "a_password");
+		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
 		userRepository.update(user);
 
 		assertEquals(user, authentication.login("test@testing.se", "a_password"));
@@ -38,7 +38,7 @@ class AuthenticationTest {
 	@Test
 	void throwsOnInvalidCredentials() throws DuplicateEntityException, IOException {
 		// Skapar ny användare
-		User user = new TestUser(1, "Test", null, "test@testing.se", "a_password");
+		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
 		userRepository.update(user);
 
 		// Felaktig lösenord
@@ -51,7 +51,7 @@ class AuthenticationTest {
 	@Test
 	void canGetLoggedInUser() throws InvalidLoginCredentials, DuplicateEntityException, IOException, NoLoggedInUser {
 		// Skapar ny användare
-		User user = new TestUser(1, "Test", null, "test@testing.se", "a_password");
+		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
 		userRepository.update(user);
 
 		// Loggar in användare
@@ -63,7 +63,7 @@ class AuthenticationTest {
 	@Test
 	void cantGetLoggedInUserWhenNotLoggedIn() throws DuplicateEntityException, IOException {
 		// Skapar ny användare
-		User user = new TestUser(1, "Test", null, "test@testing.se", "a_password");
+		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
 		userRepository.update(user);
 
 		assertThrows(NoLoggedInUser.class, () -> authentication.getUser());
@@ -72,7 +72,7 @@ class AuthenticationTest {
 	@Test
 	void canLogOut() throws InvalidLoginCredentials, DuplicateEntityException, IOException, NoLoggedInUser {
 		// Skapar ny användare
-		User user = new TestUser(1, "Test", null, "test@testing.se", "a_password");
+		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
 		userRepository.update(user);
 
 		// Loggar in användare
