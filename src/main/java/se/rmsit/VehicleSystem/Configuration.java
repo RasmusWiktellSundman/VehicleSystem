@@ -9,7 +9,6 @@ public class Configuration {
 	private static File appConfig;
 
 	static {
-		System.out.println("Testing");
 		try {
 			InputStream propsInput;
 			if(System.getProperty("test.mode") != null){
