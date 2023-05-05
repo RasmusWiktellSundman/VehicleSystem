@@ -9,6 +9,7 @@ public class Configuration {
 	private static File appConfig;
 
 	static {
+		System.out.println("Testing");
 		try {
 			InputStream propsInput;
 			if(System.getProperty("test.mode") != null){
@@ -19,7 +20,8 @@ public class Configuration {
 				copyDefaultPropertiesFile();
 
 				String currentUsersHomeDir = System.getProperty("user.home");
-				String configFilePath = currentUsersHomeDir+"\\.config\\VehicleSystem\\config.properties";
+				System.out.println(currentUsersHomeDir);
+				String configFilePath = currentUsersHomeDir+"/.config/VehicleSystem/config.properties";
 				appConfig = new File(configFilePath);
 				propsInput = new FileInputStream(configFilePath);
 			}
@@ -67,7 +69,7 @@ public class Configuration {
 	 */
 	private static void copyDefaultPropertiesFile() throws IOException {
 		String currentUsersHomeDir = System.getProperty("user.home");
-		String configFilePath = currentUsersHomeDir+"\\.config\\VehicleSystem\\config.properties";
+		String configFilePath = currentUsersHomeDir+"/.config/VehicleSystem/config.properties";
 		System.out.println(currentUsersHomeDir);
 
 		// Kollar om config.properties redan finns
@@ -75,10 +77,10 @@ public class Configuration {
 			return;
 
 		// Skapar mapp i användarens .config mapp i hemma-katalogen (om den inte finns)
-		File configDir = new File(currentUsersHomeDir+"\\.config\\VehicleSystem");
+		File configDir = new File(currentUsersHomeDir+"/.config/VehicleSystem");
 		if(!configDir.exists()) {
 			if(!configDir.mkdirs()) {
-				throw new RuntimeException("Failed copying config.properties");
+				throw new RuntimeException("Failed creating directory " + currentUsersHomeDir+"/.config/VehicleSystem, for config.properties");
 			}
 		}
 
