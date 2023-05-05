@@ -6,6 +6,7 @@ import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.RepairLog;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -146,6 +147,7 @@ public abstract class Vehicle implements Fetchable {
 				"wheels: " + getWheels() + "\n" +
 				"construction_date: " + getConstructionDate().getTimeInMillis() + "\n" +
 				"bought_date: " + getBoughtDate().getTimeInMillis() + "\n" +
+				"warranty_period_end: " + getWarrantyPeriodEnd().getTimeInMillis() + "\n" +
 				"purchase_price: " + getPurchasePrice();
 	}
 
@@ -164,19 +166,25 @@ public abstract class Vehicle implements Fetchable {
 				setBoughtDate(Calendar.getInstance());
 				getBoughtDate().setTimeInMillis(Long.parseLong(value));
 			}
+			case "warranty_period_end" -> {
+				setWarrantyPeriodEnd(Calendar.getInstance());
+				getWarrantyPeriodEnd().setTimeInMillis(Long.parseLong(value));
+			}
 			case "purchase_price" -> setPurchasePrice(Double.parseDouble(value));
 		}
 	}
 
 	@Override
 	public String toString() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return "Vehicle{" +
-				"ownerId=" + ownerId +
+				"ownerId='" + ownerId + '\'' +
 				", registrationNumber='" + registrationNumber + '\'' +
 				", maximumPassengers=" + maximumPassengers +
 				", wheels=" + wheels +
-				", constructionDate=" + constructionDate +
-				", boughtDate=" + boughtDate +
+				", constructionDate=" + (constructionDate != null ? dateFormat.format(constructionDate.getTime()) : null) +
+				", boughtDate=" + (boughtDate != null ? dateFormat.format(boughtDate.getTime()) : null) +
+				", warrantyPeriodEnd=" + (warrantyPeriodEnd != null ? dateFormat.format(warrantyPeriodEnd.getTime()) : null) +
 				", purchasePrice=" + purchasePrice +
 				'}';
 	}
@@ -194,6 +202,7 @@ public abstract class Vehicle implements Fetchable {
 		if (!Objects.equals(ownerId, vehicle.ownerId)) return false;
 		if (!Objects.equals(registrationNumber, vehicle.registrationNumber)) return false;
 		if (!Objects.equals(constructionDate, vehicle.constructionDate)) return false;
+		if (!Objects.equals(warrantyPeriodEnd, vehicle.warrantyPeriodEnd)) return false;
 		return Objects.equals(boughtDate, vehicle.boughtDate);
 	}
 
