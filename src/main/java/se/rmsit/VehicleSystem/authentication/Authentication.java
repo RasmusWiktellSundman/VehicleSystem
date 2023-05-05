@@ -1,5 +1,6 @@
 package se.rmsit.VehicleSystem.authentication;
 
+import se.rmsit.VehicleSystem.entities.Admin;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.exceptions.InvalidLoginCredentials;
 import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
@@ -43,5 +44,9 @@ public class Authentication {
 
 	public void logout() {
 		loggedInUser = null;
+	}
+
+	public boolean isAdmin() {
+		return (loggedInUser instanceof Admin);
 	}
 }

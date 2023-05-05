@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.TestHelper;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,5 +38,16 @@ class CustomerTest {
 		User expected1 = new Customer("1", "Name", "Lastname", "", "", "", "", false, "test1@testing.se", "password");
 
 		assertEquals(expected1, testUser1);
+	}
+
+	@Test
+	void canGetAllCustomers() throws IOException {
+		Customer testCustomer1 = new Customer("Name", "Lastname", null, null, null, null, false, "test1@testing.se", "password");
+		testCustomer1.save();
+		Customer testCustomer2 = new Customer("Name2", "Lastname2", null, null, null, null, false, "test2@testing.se", "password2");
+		testCustomer2.save();
+
+		List<Customer> expected = List.of(testCustomer1, testCustomer2);
+		assertEquals(expected, Customer.getAll());
 	}
 }

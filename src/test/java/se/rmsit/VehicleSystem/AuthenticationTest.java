@@ -3,6 +3,7 @@ package se.rmsit.VehicleSystem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.authentication.Authentication;
+import se.rmsit.VehicleSystem.entities.Admin;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
 import se.rmsit.VehicleSystem.exceptions.InvalidLoginCredentials;
@@ -10,9 +11,7 @@ import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationTest {
 	private Authentication authentication;
@@ -78,6 +77,28 @@ class AuthenticationTest {
 		assertDoesNotThrow(() -> authentication.logout());
 
 		assertThrows(NoLoggedInUser.class, () -> authentication.getUser());
+	}
+
+	@Test
+	void canCheckIsAdmin() throws InvalidLoginCredentials, DuplicateEntityException, IOException, NoLoggedInUser {
+		// Skapar ny användare
+		Admin admin = new Admin("1", "Test", null, "admin@testing.se", "a_password");
+		User testUser = new TestUser("2", "Test", null, "test@testing.se", "a_password");
+		admin.save();
+		testUser.save();
+
+		// Inte admin ifall ingen är inloggad
+		assertFalse(authentication.isAdmin());
+
+		// Loggar in som admin
+		authentication.login("admin@testing.se", "a_password");
+
+		assertTrue(authentication.isAdmin());
+
+		// Loggar in som vanlig användare
+		authentication.logout();
+		authentication.login("test@testing.se", "a_password");
+		assertFalse(authentication.isAdmin());
 	}
 
 }

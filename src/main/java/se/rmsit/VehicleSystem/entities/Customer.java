@@ -3,6 +3,7 @@ package se.rmsit.VehicleSystem.entities;
 import se.rmsit.VehicleSystem.FileHandler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class Customer extends User {
@@ -50,6 +51,13 @@ public class Customer extends User {
 			}
 		}
 		return null;
+	}
+
+	public static List<Customer> getAll() throws IOException {
+		return FileHandler.getAllObjects("users").stream()
+				.filter(fetchable -> fetchable instanceof Customer)
+				.map(fetchable -> (Customer) fetchable)
+				.toList();
 	}
 
 	@Override
