@@ -1,16 +1,19 @@
 package se.rmsit.VehicleSystem.entities.vehicles;
 
+import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.entities.Entity;
 import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.User;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class Vehicle extends Entity implements Fetchable {
-	// Används av VehicleRepository för att hämta User objekt
+	// Sparar endast ägarens id och inte hela objektet för att undvika synkroniseringsfel mellan persistent lagring och minne
 	private String ownerId;
-	private User owner;
 	private String registrationNumber;
 	private int maximumPassengers;
 	private int wheels;
@@ -40,6 +43,38 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	 * Standard konstruktor, används för att skapa objekt från persistent lagring.
 	 */
 	public Vehicle() {}
+
+	public static Vehicle getByRegistrationNumber(String registrationNumber) throws IOException {
+		// Hämtar användare från persistent lagring
+		return (Vehicle) FileHandler.loadObject(registrationNumber, "vehicles");
+	}
+
+	public static List<Vehicle> getByOwner(User owner) throws IOException {
+		List<Vehicle> vehicles = new ArrayList<>();
+		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
+			// Kollar om e-posten från den inlästa användaren är samma som den givna e-posten
+			if(((Vehicle) fetchable).getOwnerId().equals(owner.getId())) {
+				vehicles.add((Vehicle) fetchable);
+			}
+		}
+		return vehicles;
+	}
+
+	/**
+	 * Sparar objektet till persistent lagring. Skriver över ifall fordon med samma registreringsnummer redan finns.
+	 * @throws IOException
+	 */
+	public void save() throws IOException {
+		FileHandler.storeObject(this, "vehicles");
+	}
+
+	/**
+	 * Raderar fordon från persistent lagring
+	 * @throws IOException
+	 */
+	public void delete() throws IOException {
+		FileHandler.deleteObject(getId(), "vehicles");
+	}
 
 	@Override
 	public String serialize() {
@@ -74,7 +109,7 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	@Override
 	public String toString() {
 		return "Vehicle{" +
-				"owner=" + owner +
+				"ownerId=" + ownerId +
 				", registrationNumber='" + registrationNumber + '\'' +
 				", maximumPassengers=" + maximumPassengers +
 				", wheels=" + wheels +
@@ -94,7 +129,7 @@ public abstract class Vehicle extends Entity implements Fetchable {
 		if (maximumPassengers != vehicle.maximumPassengers) return false;
 		if (wheels != vehicle.wheels) return false;
 		if (Double.compare(vehicle.purchasePrice, purchasePrice) != 0) return false;
-		if (!Objects.equals(owner, vehicle.owner)) return false;
+		if (!Objects.equals(ownerId, vehicle.ownerId)) return false;
 		if (!Objects.equals(registrationNumber, vehicle.registrationNumber)) return false;
 		if (!Objects.equals(constructionDate, vehicle.constructionDate)) return false;
 		return Objects.equals(boughtDate, vehicle.boughtDate);
@@ -109,11 +144,15 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	}
 
 	public User getOwner() {
-		return owner;
+		try {
+			return User.getById(ownerId);
+		} catch (IOException e) {
+			throw new RuntimeException("Tried getting Vehicle owner for a user id that doesn't exist");
+		}
 	}
 
 	public void setOwner(User owner) {
-		this.owner = owner;
+		this.ownerId = owner.getId();
 	}
 
 	public String getRegistrationNumber() {

@@ -44,9 +44,20 @@ public abstract class User extends Entity implements Loginable {
 	}
 
 	/**
-	 * Raderar användaren från persistent lagring
+	 * Sparar objektet till persistent lagring. Skriver över ifall användare med samma id redan finns.
+	 * @throws IOException
 	 */
+	public void save() throws IOException {
+		FileHandler.storeObject(this, "users");
+	}
 
+	/**
+	 * Raderar användaren från persistent lagring
+	 * @throws IOException
+	 */
+	public void delete() throws IOException {
+		FileHandler.deleteObject(getId(), "users");
+	}
 
 	/**
 	 * Laddar in ett nyckel-värde par till objektet
@@ -138,17 +149,5 @@ public abstract class User extends Entity implements Loginable {
 
 	public void setHashedPassword(String hashedPassword) {
 		this.hashedPassword = hashedPassword;
-	}
-
-	/**
-	 * Sparar objektet till persistent lagring. Skriver över ifall användare med samma id redan finns.
-	 * @throws IOException
-	 */
-	public void save() throws IOException {
-		FileHandler.storeObject(this, "users");
-	}
-
-	public void delete() throws IOException {
-		FileHandler.deleteObject(getId(), "users");
 	}
 }
