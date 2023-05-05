@@ -5,6 +5,7 @@ import se.rmsit.VehicleSystem.entities.User;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.Objects;
 
 public class RegisterCustomerPanel extends PanelContainer {
 	private JPanel panel;
@@ -29,33 +30,79 @@ public class RegisterCustomerPanel extends PanelContainer {
 
 				// Validera data
 				if(User.getByEmail(emailField.getText()) != null) {
-					error.setText("E-posten är upptagen");
-					error.setVisible(true);
+					showError("E-posten är upptagen");
 					return;
 				}
 
-				Customer customer = new Customer(
-						firstnameField.getText(),
-						lastnameField.getText(),
-						addressField.getText(),
-						postTownField.getText(),
-						postcodeField.getText(),
-						phoneNumberField.getText(),
-						publicAuthorityCheckBox.isSelected(),
-						emailField.getText(),
-						new String(passwordField.getPassword())
-				);
+				// Validerar att obligatorisk information är given, avbryter annars
+				if(!validateRequired()) {
+					return;
+				}
 
-				customer.save();
-				success.setText("Kund skapad!");
-				success.setVisible(true);
-				error.setVisible(false);
-				clearFields();
+				// Validerar att lösenord och upprepat lösenord är samma
+				if(!(new String(passwordField.getPassword()).equals(new String(repeatPasswordField.getPassword())))) {
+					showError("Lösenord och upprepat lösenord behöver vara samma");
+					return;
+				}
+
+				try {
+					Customer customer = new Customer(
+							firstnameField.getText(),
+							lastnameField.getText(),
+							addressField.getText(),
+							postTownField.getText(),
+							postcodeField.getText(),
+							phoneNumberField.getText(),
+							publicAuthorityCheckBox.isSelected(),
+							emailField.getText(),
+							new String(passwordField.getPassword())
+					);
+
+					customer.save();
+					success.setText("Kund skapad!");
+					success.setVisible(true);
+					error.setVisible(false);
+					clearFields();
+				} catch (IllegalArgumentException e) {
+					showError(e.getMessage());
+				}
 			} catch (IOException e) {
-				error.setText("Skapande av kund misslyckades");
-				error.setVisible(true);
+				showError("Skapande av kund misslyckades");
 			}
 		});
+	}
+
+	private boolean validateRequired() {
+		if(Objects.equals(firstnameField.getText(), "")) {
+			showError("Förnamn är obligatoriskt");
+			return false;
+		}
+		if(Objects.equals(emailField.getText(), "")) {
+			showError("E-post är obligatoriskt");
+			return false;
+		}
+		if(Objects.equals(addressField.getText(), "")) {
+			showError("Adress är obligatoriskt");
+			return false;
+		}
+		if(Objects.equals(postTownField.getText(), "")) {
+			showError("Postort är obligatoriskt");
+			return false;
+		}
+		if(Objects.equals(postcodeField.getText(), "")) {
+			showError("Postnummer är obligatoriskt");
+			return false;
+		}
+		if(new String(passwordField.getPassword()).equals("")) {
+			showError("Lösenord är obligatoriskt");
+			return false;
+		}
+		return true;
+	}
+
+	private void showError(String s) {
+		error.setText(s);
+		error.setVisible(true);
 	}
 
 	private void clearFields() {
