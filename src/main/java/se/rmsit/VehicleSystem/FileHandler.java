@@ -19,11 +19,15 @@ import java.util.List;
 public class FileHandler {
 	private static final String dataDirectoryPath = Configuration.getProperty("data_directory");
 	public static void createDataFolders() {
+		// Skapar mappar för användare och fordon
+		createFolder("users");
+		createFolder("vehicles");
+	}
 
-		// create user data folder
-		File usersDataFolder = new File(dataDirectoryPath + "\\users");
-		if(!usersDataFolder.exists())
-			usersDataFolder.mkdirs();
+	private static void createFolder(String folder) {
+		File vehiclesDataFolder = new File(dataDirectoryPath + "\\" + folder);
+		if (!vehiclesDataFolder.exists())
+			vehiclesDataFolder.mkdirs();
 	}
 
 	public static void storeObject(Fetchable object, String subPath) throws IOException {
