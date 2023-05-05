@@ -48,7 +48,7 @@ public abstract class PrivateVehicle extends Vehicle {
 	@Override
 	public String serialize() {
 		String serialized = super.serialize() + "\n";
-		serialized += "address: " + getAddress() + "\n";
+		serialized += "address: " + getAddress();
 		return serialized;
 	}
 

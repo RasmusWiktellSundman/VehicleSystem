@@ -27,6 +27,8 @@ public class RegisterVehiclePanel extends PanelContainer {
 	private JTextField boughtDateField;
 	private JSpinner wheelSpinner;
 	private JLabel success;
+	private JSpinner trunkVolumeSpinner;
+	private JLabel trunkVolumeLabel;
 
 	public RegisterVehiclePanel(Authentication authentication) {
 		this.authentication = authentication;
@@ -73,7 +75,8 @@ public class RegisterVehiclePanel extends PanelContainer {
 								constructionDate,
 								boughtDate,
 								(int) purchasePriceSpinner.getValue(),
-								customer.getAddress()
+								customer.getAddress(),
+								(int) trunkVolumeSpinner.getValue()
 						);
 						car.save();
 					} else if(vehicleType.getSelectedItem().equals("Motorcykel")) {
@@ -107,6 +110,23 @@ public class RegisterVehiclePanel extends PanelContainer {
 				error.setVisible(true);
 			}
 		});
+
+		// Visa olika fält beroende på fordonstyp
+		vehicleType.addActionListener(e -> {
+			updateVisibleFields();
+		});
+	}
+
+	/**
+	 * Uppdaterar dynamiskt vilja fält och tillhörande etiketter som ska synas
+	 */
+	private void updateVisibleFields() {
+		trunkVolumeLabel.setVisible(false);
+		trunkVolumeSpinner.setVisible(false);
+		if(vehicleType.getSelectedItem().equals("Bil")) {
+			trunkVolumeLabel.setVisible(true);
+			trunkVolumeSpinner.setVisible(true);
+		}
 	}
 
 	private void clearFields() {
@@ -126,6 +146,7 @@ public class RegisterVehiclePanel extends PanelContainer {
 
 		// Sätter dynamiska standardvärden
 		setDynamicFields();
+
 		try {
 			User user = authentication.getUser();
 			vehicleType.removeAllItems();
