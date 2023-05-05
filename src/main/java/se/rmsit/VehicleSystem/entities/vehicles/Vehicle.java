@@ -6,7 +6,6 @@ import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.RepairLog;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -21,14 +20,16 @@ public abstract class Vehicle implements Fetchable {
 	private Calendar constructionDate;
 	private Calendar boughtDate;
 	private double purchasePrice;
+	private Calendar warrantyPeriodEnd;
 
-	public Vehicle(Customer owner, String registrationNumber, int maximumPassengers, int wheels, Calendar constructionDate, Calendar boughtDate, double purchasePrice) {
+	public Vehicle(Customer owner, String registrationNumber, int maximumPassengers, int wheels, Calendar constructionDate, Calendar boughtDate, Calendar warrantyPeriodEnd, double purchasePrice) {
 		setOwner(owner);
 		setRegistrationNumber(registrationNumber);
 		setMaximumPassengers(maximumPassengers);
 		setWheels(wheels);
 		setConstructionDate(constructionDate);
 		setBoughtDate(boughtDate);
+		setWarrantyPeriodEnd(warrantyPeriodEnd);
 		setPurchasePrice(purchasePrice);
 	}
 
@@ -130,6 +131,11 @@ public abstract class Vehicle implements Fetchable {
 		}
 
 		return value;
+	}
+
+	public void addRepair(String description, Calendar date) throws IOException {
+		RepairLog repairLog = new RepairLog(date, description, getOwner(), this);
+		repairLog.save();
 	}
 
 	@Override
@@ -272,9 +278,16 @@ public abstract class Vehicle implements Fetchable {
 		return ownerId;
 	}
 
-	public void addRepair(String description, Calendar date) throws IOException {
-		RepairLog repairLog = new RepairLog(date, description, getOwner(), this);
-		repairLog.save();
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	public Calendar getWarrantyPeriodEnd() {
+		return warrantyPeriodEnd;
+	}
+
+	public void setWarrantyPeriodEnd(Calendar warrantyPeriodEnd) {
+		this.warrantyPeriodEnd = warrantyPeriodEnd;
 	}
 
 	public List<RepairLog> getRepairs() {
