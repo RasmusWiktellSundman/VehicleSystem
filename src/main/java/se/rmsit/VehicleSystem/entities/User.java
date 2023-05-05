@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Objects;
 
-public class User implements Loginable, Fetchable {
+public abstract class User implements Loginable, Fetchable {
 	private long id;
-	private String username;
+	private String firstName;
+	private String lastName;
 	private String email;
 	private String hashedPassword;
 	private UserType userType;
@@ -25,9 +26,10 @@ public class User implements Loginable, Fetchable {
 	 */
 	public User() {}
 
-	public User(long userId, String username, String email, String hashedPassword, UserType userType) {
+	public User(long userId, String firstName, String lastName, String email, String hashedPassword, UserType userType) {
 		this.id = userId;
-		this.username = username;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.email = email;
 		this.hashedPassword = hashedPassword;
 		this.userType = userType;
@@ -45,7 +47,8 @@ public class User implements Loginable, Fetchable {
 			String[] tokens = line.split(": ");
 			switch (tokens[0]) {
 				case "user_id" -> setId(Long.parseLong(tokens[1]));
-				case "username" -> setUsername(tokens[1]);
+				case "first_name" -> setFirstName(tokens[1]);
+				case "last_name" -> setLastName(tokens[1]);
 				case "email" -> setEmail(tokens[1]);
 				case "hashed_password" -> setHashedPassword(tokens[1]);
 				case "user_type" -> setUserType(UserType.valueOf(tokens[1]));
@@ -55,8 +58,10 @@ public class User implements Loginable, Fetchable {
 
 	@Override
 	public void store(PrintWriter printWriter) {
+		printWriter.println("class: " + getClass().getName());
 		printWriter.println("user_id: " + getId());
-		printWriter.println("username: " + getUsername());
+		printWriter.println("first_name: " + getFirstName());
+		printWriter.println("last_name: " + getLastName());
 		printWriter.println("email: " + getEmail());
 		printWriter.println("hashed_password: " + getHashedPassword());
 		printWriter.println("user_type: " + getUserType().toString());
@@ -69,7 +74,8 @@ public class User implements Loginable, Fetchable {
 
 		User user = (User) o;
 		if (id != user.id) return false;
-		if (!Objects.equals(username, user.username)) return false;
+		if (!Objects.equals(firstName, user.firstName)) return false;
+		if (!Objects.equals(lastName, user.lastName)) return false;
 		if (!Objects.equals(email, user.email)) return false;
 		if (userType != user.userType) return false;
 		return Objects.equals(hashedPassword, user.hashedPassword);
@@ -79,7 +85,8 @@ public class User implements Loginable, Fetchable {
 	public String toString() {
 		return "User{" +
 				"id=" + id +
-				", username='" + username + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
 				", email='" + email + '\'' +
 				", hashedPassword='" + hashedPassword + '\'' +
 				", userType=" + userType +
@@ -96,12 +103,20 @@ public class User implements Loginable, Fetchable {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getEmail() {

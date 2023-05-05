@@ -1,11 +1,18 @@
 package se.rmsit.VehicleSystem;
 
 import se.rmsit.VehicleSystem.entities.Fetchable;
-import se.rmsit.VehicleSystem.entities.User;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +30,10 @@ public class FileHandler {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+object.getId()+".txt");
 		if(!file.exists())
 			file.createNewFile();
-		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-		object.store(writer);
-		writer.close();
+		// Använder try-with-resource för att automatiskt stänga läsaren
+		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)))) {
+			object.store(writer);
+		}
 	}
 
 	public static void storeObject(Fetchable object) throws IOException {
@@ -34,34 +42,46 @@ public class FileHandler {
 
 	public static Fetchable loadObject(Fetchable fetchable, long id, String subPath) throws IOException {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-
-		fetchable.load(reader);
-		return fetchable;
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			fetchable.load(reader);
+			return fetchable;
+		}
 	}
 
 	public static Fetchable loadObject(Fetchable fetchable, long id) throws IOException {
 		return loadObject(fetchable, id, "users");
 	}
 
-	public static void deleteObject(long id, String subPath) {
+	public static void deleteObject(long id, String subPath) throws IOException {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
-		file.delete();
+		Files.delete(Path.of(file.toURI()));
 	}
 
-	public static List<Fetchable> getAllObjects(Class<? extends Fetchable> clazz, String subPath) throws IOException {
+	public static List<Fetchable> getAllObjects(String subPath) throws IOException {
 		File directory = new File(dataDirectoryPath+"\\"+subPath);
 		List<Fetchable> fetchables = new ArrayList<>();
 		for (File file : directory.listFiles()) {
-			// Skapar nytt objekt från clazz
-			try {
+			// Använder try-with-resource för att automatiskt stänga läsaren
+			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
+
+				// Skapar objekt utifrån klass i datafil
+				// Första raden ska följa formatet class: klass-namn
+				// Skapar nytt objekt från clazz
+				//TODO: Kolla att den innehåller class:
+				String className = reader.readLine().split(" ")[1];
+				Class clazz = Class.forName(className);
 				Constructor constructor = clazz.getConstructor();
 				Fetchable fetchable = (Fetchable) constructor.newInstance();
-				BufferedReader reader = new BufferedReader(new FileReader(file));
+
+				// Läser in data från filen och sparar i objektet
 				fetchable.load(reader);
 				fetchables.add(fetchable);
 			} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
 				throw new RuntimeException("Missing default constructor");
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("Invalid class in data-file, " + file.getPath());
 			}
 		}
 
