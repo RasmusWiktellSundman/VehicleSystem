@@ -4,10 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.Configuration;
 import se.rmsit.VehicleSystem.FileHandler;
+import se.rmsit.VehicleSystem.TestHelper;
 import se.rmsit.VehicleSystem.UserType;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,19 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTest {
 	@BeforeEach
 	void setup() {
-		// Remove test data directory
-		File dataFolder = new File(Configuration.getProperty("data_directory"));
-		if(dataFolder.exists()) {
-			for (File directories : dataFolder.listFiles()) {
-				if (directories.isDirectory()) {
-					for (File file : directories.listFiles()) {
-						System.out.println(file);
-						file.delete();
-					}
-				}
-			}
-		}
-		FileHandler.createDataFolders();
+		TestHelper.resetDataFiles();
 	}
 
 	@Test
