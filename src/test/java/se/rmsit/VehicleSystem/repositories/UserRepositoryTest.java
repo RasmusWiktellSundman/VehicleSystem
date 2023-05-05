@@ -98,8 +98,8 @@ class UserRepositoryTest {
 	@Test
 	void canLoadAllFromFile() throws DuplicateEntityException, IOException {
 		// Använder Customer, då UserRepository inläsning av alla användare från filer inte stödjer TestUser
-		Customer testCustomer = new Customer(1, "Customer", null, null, null, null, false, "customer@testing.se", "no_hashing");
-		Customer testCustomer2 = new Customer(2, "Customer", null, null, null, null, false, "customer2@testing.se", "no_hashing");
+		Customer testCustomer = new Customer(1, "Customer", null, null, null, null, null, false, "customer@testing.se", "no_hashing");
+		Customer testCustomer2 = new Customer(2, "Customer", null, null, null, null, null, false, "customer2@testing.se", "no_hashing");
 		userRepository.update(testCustomer);
 		userRepository.update(testCustomer2);
 
@@ -112,8 +112,8 @@ class UserRepositoryTest {
 
 	@Test
 	void canLoadCustomer() throws DuplicateEntityException, IOException {
-		Customer testCustomer = new Customer(1, "Customer", null, null, null, null, false, "customer@testing.se", "no_hashing");
-		Customer testCustomer2 = new Customer(2, "Customer", null, null, null, null, false, "customer2@testing.se", "no_hashing");
+		Customer testCustomer = new Customer(1, "Customer", "something", "an address", "Cyberspace", "12345", "0701234567", false, "customer@testing.se", "no_hashing");
+		Customer testCustomer2 = new Customer(2, "Customer", "something2", "an address2", "Cyberspace2", "12346", "0701234568", true, "customer2@testing.se", "no_hashing2");
 		userRepository.update(testCustomer);
 		userRepository.update(testCustomer2);
 
@@ -121,5 +121,6 @@ class UserRepositoryTest {
 		userRepository = new UserRepository();
 
 		assertDoesNotThrow(() -> (Customer) userRepository.getById(1).get());
+		assertEquals(testCustomer, userRepository.getById(1).get());
 	}
 }

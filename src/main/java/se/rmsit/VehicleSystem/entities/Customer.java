@@ -1,16 +1,16 @@
 package se.rmsit.VehicleSystem.entities;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Objects;
 
 public class Customer extends User {
-
 	private String address;
 
 	// Använder String då postnummer inte är numeriska över hela världen.
 	private String postcode;
-
 	private String postTown;
-
 	private String phoneNumber;
 
 	// Använder isPublicAuthority med is, då publicAuthority antagligen hade misstolkats som vilken specifika publika entitet (kommun) det är och inte om kunden generellt är en publik entitet.
@@ -21,12 +21,52 @@ public class Customer extends User {
 	 */
 	public Customer() {}
 
-	public Customer(long customerId, String firstName, String lastName, String address, String postTown, String phoneNumber, boolean isPublicAuthority, String email, String hashedPassword) {
+	public Customer(long customerId, String firstName, String lastName, String address, String postTown, String postcode, String phoneNumber, boolean isPublicAuthority, String email, String hashedPassword) {
 		super(customerId, firstName, lastName, email, hashedPassword);
 		setAddress(address);
 		setPostTown(postTown);
 		setIsPublicAuthority(isPublicAuthority);
+		setPostcode(postcode);
 		setPhoneNumber(phoneNumber);
+	}
+
+	@Override
+	public void store(PrintWriter printWriter) {
+		super.store(printWriter);
+		printWriter.println("address: " + getAddress());
+		printWriter.println("postcode: " + getPostcode());
+		printWriter.println("postTown: " + getPostTown());
+		printWriter.println("phoneNumber: " + getPhoneNumber());
+		printWriter.println("isPublicAuthority: " + isPublicAuthority());
+	}
+
+	@Override
+	public void load(BufferedReader reader) throws IOException {
+		// Skapar objekt från reader data (samma som store metoden)
+		while (true) {
+			String line = reader.readLine();
+			if(line == null) {
+				break;
+			}
+			// Delar upp raden i nyckel-data par
+			String[] tokens = line.split(": ");
+			String data = tokens[1];
+			if(data.equals("null")) {
+				data = null;
+			}
+			switch (tokens[0]) {
+				case "user_id" -> setId(Long.parseLong(data));
+				case "first_name" -> setFirstName(data);
+				case "last_name" -> setLastName(data);
+				case "email" -> setEmail(data);
+				case "hashed_password" -> setHashedPassword(data);
+				case "address" -> setAddress(data);
+				case "postcode" -> setPostcode(data);
+				case "postTown" -> setPostTown(data);
+				case "phoneNumber" -> setPhoneNumber(data);
+				case "isPublicAuthority" -> setIsPublicAuthority(data.equals("true"));
+			}
+		}
 	}
 
 	@Override
@@ -45,13 +85,19 @@ public class Customer extends User {
 	}
 
 	@Override
-	public int hashCode() {
-		int result = address != null ? address.hashCode() : 0;
-		result = 31 * result + (postcode != null ? postcode.hashCode() : 0);
-		result = 31 * result + (postTown != null ? postTown.hashCode() : 0);
-		result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
-		result = 31 * result + (isPublicAuthority ? 1 : 0);
-		return result;
+	public String toString() {
+		return "Customer{" +
+				"id=" + getId() +
+				", firstName='" + getFirstName() + '\'' +
+				", lastName='" + getLastName() + '\'' +
+				", email='" + getEmail() + '\'' +
+				", hashedPassword='" + getHashedPassword() + '\'' +
+				", address='" + address + '\'' +
+				", postcode='" + postcode + '\'' +
+				", postTown='" + postTown + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", isPublicAuthority=" + isPublicAuthority +
+				'}';
 	}
 
 	public long getCustomerId() {
