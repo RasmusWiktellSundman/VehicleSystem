@@ -21,6 +21,10 @@ public class Customer extends User {
 	 */
 	public Customer() {}
 
+	public Customer(String firstName, String lastName, String address, String postTown, String postcode, String phoneNumber, boolean isPublicAuthority, String email, String hashedPassword) {
+		this(Customer.getNextId(), firstName, lastName, address, postTown, postcode, phoneNumber, isPublicAuthority, email, hashedPassword);
+	}
+
 	public Customer(String customerId, String firstName, String lastName, String address, String postTown, String postcode, String phoneNumber, boolean isPublicAuthority, String email, String hashedPassword) {
 		super(customerId, firstName, lastName, email, hashedPassword);
 		setAddress(address);
