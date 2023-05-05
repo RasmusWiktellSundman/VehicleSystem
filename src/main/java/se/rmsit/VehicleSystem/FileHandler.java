@@ -20,13 +20,13 @@ public class FileHandler {
 	}
 
 	private static void createFolder(String folder) {
-		File vehiclesDataFolder = new File(dataDirectoryPath + "\\" + folder);
+		File vehiclesDataFolder = new File(dataDirectoryPath + "/" + folder);
 		if (!vehiclesDataFolder.exists())
 			vehiclesDataFolder.mkdirs();
 	}
 
 	public static void storeObject(Fetchable object, String subPath) throws IOException {
-		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+object.getId()+".txt");
+		File file = new File(dataDirectoryPath+"/"+subPath+"/"+object.getId()+".txt");
 		if(!file.exists())
 			file.createNewFile();
 		// Använder try-with-resource för att automatiskt stänga läsaren
@@ -44,7 +44,7 @@ public class FileHandler {
 
 	public static void appendObjectToFile(Fetchable object, String fileName) throws IOException {
 		boolean fileExisted = true;
-		File file = new File(dataDirectoryPath+"\\"+fileName+".txt");
+		File file = new File(dataDirectoryPath+"/"+fileName+".txt");
 		// Skapar ny fil ifall den inte redan finns
 		if(!file.exists()) {
 			file.createNewFile();
@@ -68,7 +68,7 @@ public class FileHandler {
 	}
 
 	public static Fetchable loadObject(Fetchable fetchable, String id, String subPath) throws IOException {
-		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
+		File file = new File(dataDirectoryPath+"/"+subPath+"/"+id+".txt");
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			// Läser in data från filen och sparar i objektet
 			loadOneObjectFromReader(fetchable, reader);
@@ -90,7 +90,7 @@ public class FileHandler {
 	 * @throws IOException
 	 */
 	public static Fetchable loadObject(String id, String subPath) throws IOException {
-		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
+		File file = new File(dataDirectoryPath+"/"+subPath+"/"+id+".txt");
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			// Skapar tom klass som implementerar Fetchable. Klasstypen är given i filen.
 			Fetchable fetchable = createEmptyFetchable(reader);
@@ -104,7 +104,7 @@ public class FileHandler {
 	}
 
 	public static void deleteObject(String id, String subPath) throws IOException {
-		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
+		File file = new File(dataDirectoryPath+"/"+subPath+"/"+id+".txt");
 		Files.delete(Path.of(file.toURI()));
 	}
 
@@ -114,12 +114,12 @@ public class FileHandler {
 	 * @return
 	 */
 	public static List<String> listObjectIds(String subPath) {
-		File directory = new File(dataDirectoryPath+"\\"+subPath);
+		File directory = new File(dataDirectoryPath+"/"+subPath);
 		return Arrays.stream(directory.list()).map(s -> s.replace(".txt", "")).toList();
 	}
 
 	public static List<Fetchable> getAllObjects(String subPath) throws IOException {
-		File directory = new File(dataDirectoryPath+"\\"+subPath);
+		File directory = new File(dataDirectoryPath+"/"+subPath);
 		List<Fetchable> fetchables = new ArrayList<>();
 		for (File file : directory.listFiles()) {
 			// Använder try-with-resource för att automatiskt stänga läsaren
@@ -137,7 +137,7 @@ public class FileHandler {
 	}
 
 	public static List<Fetchable> getAllObjectsFromOneFile(String fileName) throws IOException {
-		File dataFile = new File(dataDirectoryPath+"\\"+fileName+".txt");
+		File dataFile = new File(dataDirectoryPath+"/"+fileName+".txt");
 		List<Fetchable> fetchables = new ArrayList<>();
 
 		// Kollar så filen finns, returnerar tom lista ifall den inte finns
