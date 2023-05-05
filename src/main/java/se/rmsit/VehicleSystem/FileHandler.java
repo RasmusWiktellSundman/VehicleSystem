@@ -187,9 +187,16 @@ public class FileHandler {
 			}
 			// Delar upp raden i nyckel-data par
 			String[] tokens = line.split(": ");
-			String data = tokens[1];
-			if(data.equals("null")) {
+
+			String data;
+			if(tokens.length == 1) {
+				// Tom string sparad
 				data = null;
+			} else {
+				data = tokens[1];
+				if(data.equals("null")) {
+					data = null;
+				}
 			}
 			fetchable.loadData(tokens[0], data);
 		}

@@ -3,6 +3,7 @@ package se.rmsit.VehicleSystem.gui;
 import se.rmsit.VehicleSystem.authentication.Authentication;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.User;
+import se.rmsit.VehicleSystem.entities.vehicles.Bus;
 import se.rmsit.VehicleSystem.entities.vehicles.Car;
 import se.rmsit.VehicleSystem.entities.vehicles.Motorcycle;
 import se.rmsit.VehicleSystem.entities.vehicles.Vehicle;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class RegisterVehiclePanel extends PanelContainer {
 	private final Authentication authentication;
@@ -91,6 +93,22 @@ public class RegisterVehiclePanel extends PanelContainer {
 								customer.getAddress()
 						);
 						motorcycle.save();
+					} else if(vehicleType.getSelectedItem().equals("Buss")) {
+						if(!customer.isPublicAuthority()) {
+							error.setText("Endast kommuner kan registrera bussar");
+							error.setVisible(true);
+							return;
+						}
+						Bus bus = new Bus(
+								customer,
+								registrationNumberField.getText(),
+								(int) maximumPassengersSpinner.getValue(),
+								(int) wheelSpinner.getValue(),
+								constructionDate,
+								boughtDate,
+								(int) purchasePriceSpinner.getValue()
+						);
+						bus.save();
 					}
 				} catch (IllegalArgumentException ex) {
 					error.setText(ex.getMessage());
@@ -123,7 +141,7 @@ public class RegisterVehiclePanel extends PanelContainer {
 	private void updateVisibleFields() {
 		trunkVolumeLabel.setVisible(false);
 		trunkVolumeSpinner.setVisible(false);
-		if(vehicleType.getSelectedItem().equals("Bil")) {
+		if(Objects.equals(vehicleType.getSelectedItem(), "Bil")) {
 			trunkVolumeLabel.setVisible(true);
 			trunkVolumeSpinner.setVisible(true);
 		}

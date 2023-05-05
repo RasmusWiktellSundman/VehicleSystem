@@ -28,4 +28,14 @@ class CustomerTest {
 		assertEquals(expected1, testUser1);
 		assertEquals(expected2, testUser2);
 	}
+
+	@Test
+	void canCreateAndLoadCustomerWithEmptyAllowedValue() throws IOException {
+		User testUser1 = new Customer("Name", "Lastname", "", "", "", "", false, "test1@testing.se", "password");
+		testUser1.save();
+
+		User expected1 = new Customer("1", "Name", "Lastname", "", "", "", "", false, "test1@testing.se", "password");
+
+		assertEquals(expected1, testUser1);
+	}
 }
