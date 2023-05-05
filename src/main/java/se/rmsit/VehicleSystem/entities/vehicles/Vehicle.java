@@ -7,10 +7,7 @@ import se.rmsit.VehicleSystem.entities.RepairLog;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class Vehicle implements Fetchable {
 	// Sparar endast ägarens id och inte hela objektet för att undvika synkroniseringsfel mellan persistent lagring och minne
@@ -231,7 +228,9 @@ public abstract class Vehicle implements Fetchable {
 	}
 
 	public void setRegistrationNumber(String registrationNumber) {
-		this.registrationNumber = registrationNumber;
+		if(!registrationNumber.toUpperCase().matches("[A-Z0-9]{6}"))
+			throw new IllegalArgumentException("Invalid registration number");
+		this.registrationNumber = registrationNumber.toUpperCase();
 	}
 
 	public int getMaximumPassengers() {
@@ -292,6 +291,9 @@ public abstract class Vehicle implements Fetchable {
 	}
 
 	public Calendar getWarrantyPeriodEnd() {
+		if(boughtDate.before(constructionDate)) {
+			throw new IllegalArgumentException("warrantyPeriodEnd can't be before boughtDate");
+		}
 		return warrantyPeriodEnd;
 	}
 

@@ -48,7 +48,6 @@ public class RegisterVehicle extends PanelContainer {
 			}
 
 			try {
-				//TODO: validera registreringsnumrets format
 				if(Vehicle.getByRegistrationNumber(registrationNumberField.getText()) != null) {
 					error.setText("Registreringsnumret är upptagen");
 					error.setVisible(true);
@@ -63,8 +62,9 @@ public class RegisterVehicle extends PanelContainer {
 
 				// Skapar ny bil
 				if(vehicleType.getSelectedItem().equals("Bil")) {
+					try {
 						Car car = new Car(
-								customer, 
+								customer,
 								registrationNumberField.getText(),
 								(int) maximumPassengersSpinner.getValue(),
 								(int) wheelSpinner.getValue(),
@@ -73,6 +73,11 @@ public class RegisterVehicle extends PanelContainer {
 								(int) purchasePriceSpinner.getValue()
 						);
 						car.save();
+					} catch (IllegalArgumentException ex) {
+						error.setText(ex.getMessage());
+						error.setVisible(true);
+						return;
+					}
 				}
 
 				// Lyckades skapa fordon
@@ -106,7 +111,6 @@ public class RegisterVehicle extends PanelContainer {
 
 		// Sätter dynamiska standardvärden
 		setDynamicFields();
-		//TODO sätt giltighetstid baserat på fordon
 		try {
 			User user = authentication.getUser();
 			vehicleType.removeAllItems();

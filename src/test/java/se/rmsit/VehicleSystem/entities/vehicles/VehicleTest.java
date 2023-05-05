@@ -157,4 +157,10 @@ class VehicleTest {
 
 		assertEquals(9000, testVehicle.getValue());
 	}
+
+	@Test
+	void cantSetInvalidRegistrationNumber() {
+		Calendar date = Calendar.getInstance();
+		assertThrows(IllegalArgumentException.class, () -> new TestVehicle(testCustomer, "ABCd123", 4, 4, date, date, 10000));
+	}
 }
