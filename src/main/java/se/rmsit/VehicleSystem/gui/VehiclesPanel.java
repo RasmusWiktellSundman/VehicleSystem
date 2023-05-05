@@ -11,15 +11,32 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class VehiclesPanel extends PanelContainer {
 	private final Authentication authentication;
 	private JTable table;
 	private JPanel panel;
 	private JLabel error;
+	private JButton filterBtn;
+	private JTextField constructionYearField;
+	private JLabel filterError;
 
 	public VehiclesPanel(Authentication authentication) {
 		this.authentication = authentication;
+		filterBtn.addActionListener(event -> {
+			// Renderar om informationen
+			if(!constructionYearField.getText().isEmpty()) {
+				try {
+					Integer.valueOf(constructionYearField.getText());
+				} catch (NumberFormatException e) {
+					filterError.setText("Ogiltigt årtal");
+					filterError.setVisible(true);
+					return;
+				}
+			}
+			render();
+		});
 	}
 
 	@Override
@@ -50,6 +67,11 @@ public class VehiclesPanel extends PanelContainer {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			for (Vehicle vehicle : Vehicle.getByOwner(customer)) {
+				// Visa endast fordon som tillverkats under givet filtreringsår. Visa alla fordon ifall filtrering är tom
+				String filterYear = constructionYearField.getText();
+				if(!filterYear.isEmpty() &&
+						vehicle.getConstructionDate().get(Calendar.YEAR) != Integer.parseInt(filterYear))
+					continue;
 				model.addRow(new String[]{
 						vehicle.getClass().getSimpleName(),
 						vehicle.getRegistrationNumber(),
@@ -80,6 +102,11 @@ public class VehiclesPanel extends PanelContainer {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			for (Vehicle vehicle : Vehicle.getAll()) {
+				// Visa endast fordon som tillverkats under givet filtreringsår. Visa alla fordon ifall filtrering är tom
+				String filterYear = constructionYearField.getText();
+				if(!filterYear.isEmpty() &&
+						vehicle.getConstructionDate().get(Calendar.YEAR) != Integer.parseInt(filterYear))
+					continue;
 				String ownerName = vehicle.getOwner().getFirstName() + " " + (vehicle.getOwner().getLastName() != null ? vehicle.getOwner().getLastName() : "");
 						model.addRow(new String[]{
 						ownerName,
