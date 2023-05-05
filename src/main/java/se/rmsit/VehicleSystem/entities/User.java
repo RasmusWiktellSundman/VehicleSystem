@@ -2,12 +2,10 @@ package se.rmsit.VehicleSystem.entities;
 
 import se.rmsit.VehicleSystem.authentication.Loginable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Objects;
 
-public abstract class User implements Loginable, Fetchable {
+public abstract class User extends Entity implements Loginable {
 	private String id;
 	private String firstName;
 	private String lastName;
@@ -27,27 +25,19 @@ public abstract class User implements Loginable, Fetchable {
 		this.hashedPassword = hashedPassword;
 	}
 
+	/**
+	 * Laddar in ett nyckel-värde par till objektet
+	 * @param key Nyckeln för värdet
+	 * @param value Värdet
+	 */
 	@Override
-	public void load(BufferedReader reader) throws IOException {
-		// Skapar objekt från reader data (samma som store metoden)
-		while (true) {
-			String line = reader.readLine();
-			if(line == null) {
-				break;
-			}
-			// Delar upp raden i nyckel-data par
-			String[] tokens = line.split(": ");
-			String data = tokens[1];
-			if(data.equals("null")) {
-				data = null;
-			}
-			switch (tokens[0]) {
-				case "user_id" -> setId(data);
-				case "first_name" -> setFirstName(data);
-				case "last_name" -> setLastName(data);
-				case "email" -> setEmail(data);
-				case "hashed_password" -> setHashedPassword(data);
-			}
+	public void loadData(String key, String value) {
+		switch (key) {
+			case "user_id" -> setId(value);
+			case "first_name" -> setFirstName(value);
+			case "last_name" -> setLastName(value);
+			case "email" -> setEmail(value);
+			case "hashed_password" -> setHashedPassword(value);
 		}
 	}
 

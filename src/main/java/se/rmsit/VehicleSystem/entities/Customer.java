@@ -40,32 +40,20 @@ public class Customer extends User {
 		printWriter.println("isPublicAuthority: " + isPublicAuthority());
 	}
 
+	/**
+	 * Laddar in ett nyckel-värde par till objektet
+	 * @param key Nyckeln för värdet
+	 * @param value Värdet
+	 */
 	@Override
-	public void load(BufferedReader reader) throws IOException {
-		// Skapar objekt från reader data (samma som store metoden)
-		while (true) {
-			String line = reader.readLine();
-			if(line == null) {
-				break;
-			}
-			// Delar upp raden i nyckel-data par
-			String[] tokens = line.split(": ");
-			String data = tokens[1];
-			if(data.equals("null")) {
-				data = null;
-			}
-			switch (tokens[0]) {
-				case "user_id" -> setId(data);
-				case "first_name" -> setFirstName(data);
-				case "last_name" -> setLastName(data);
-				case "email" -> setEmail(data);
-				case "hashed_password" -> setHashedPassword(data);
-				case "address" -> setAddress(data);
-				case "postcode" -> setPostcode(data);
-				case "postTown" -> setPostTown(data);
-				case "phoneNumber" -> setPhoneNumber(data);
-				case "isPublicAuthority" -> setIsPublicAuthority(data.equals("true"));
-			}
+	public void loadData(String key, String value) {
+		super.loadData(key, value);
+		switch (key) {
+			case "address" -> setAddress(value);
+			case "postcode" -> setPostcode(value);
+			case "postTown" -> setPostTown(value);
+			case "phoneNumber" -> setPhoneNumber(value);
+			case "isPublicAuthority" -> setIsPublicAuthority(value.equals("true"));
 		}
 	}
 
