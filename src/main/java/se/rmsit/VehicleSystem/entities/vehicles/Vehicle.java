@@ -5,7 +5,6 @@ import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.repositories.UserRepository;
 
-import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -14,6 +13,8 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	 * Används endast för att initiera fordon från persistent lagring
 	 */
 	private UserRepository userRepository;
+	// Används av VehicleRepository för att hämta User objekt
+	private String ownerId;
 	private User owner;
 	private String registrationNumber;
 	private int maximumPassengers;
@@ -43,9 +44,7 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	/**
 	 * Standard konstruktor, används för att skapa objekt från persistent lagring.
 	 */
-	public Vehicle(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+	public Vehicle() {}
 
 	@Override
 	public String serialize() {
@@ -61,7 +60,7 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	@Override
 	public void loadData(String key, String value) {
 		switch (key) {
-			case "owner_id" -> setOwner(userRepository.getById(value).get());
+			case "owner_id" -> ownerId = value;
 			case "registration_number" -> setRegistrationNumber(value);
 			case "maximum_passengers" -> setMaximumPassengers(Integer.parseInt(value));
 			case "wheels" -> setWheels(Integer.parseInt(value));
@@ -177,5 +176,9 @@ public abstract class Vehicle extends Entity implements Fetchable {
 
 	public void setPurchasePrice(double purchasePrice) {
 		this.purchasePrice = purchasePrice;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
 	}
 }

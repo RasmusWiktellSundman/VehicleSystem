@@ -97,7 +97,6 @@ class UserRepositoryTest {
 
 	@Test
 	void canLoadAllFromFile() throws DuplicateEntityException, IOException {
-		// Använder Customer, då UserRepository inläsning av alla användare från filer inte stödjer TestUser
 		User testUser = new TestUser("1", "Test", "something", "test@testing.se", "aHash");
 		User testUser2 = new TestUser("2", "Test2", "something", "test2@testing.se", "aHash");
 		userRepository.update(testUser);

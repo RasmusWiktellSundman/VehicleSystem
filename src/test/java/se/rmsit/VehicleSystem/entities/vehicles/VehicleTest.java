@@ -37,9 +37,12 @@ class VehicleTest {
 	}
 
 	@Test
-	void canLoadUser() throws IOException {
+	void canLoadVehicle() throws IOException {
 		Vehicle vehicle = new TestVehicle(testUser, "ABC123", 4, 4, Calendar.getInstance(), Calendar.getInstance(), 100);
 		assertDoesNotThrow(() -> FileHandler.storeObject(vehicle, "vehicles"));
-		assertEquals(vehicle, FileHandler.loadObject(new TestVehicle(userRepository), "ABC123","vehicles"));
+		Vehicle loadedVehicle = (Vehicle) FileHandler.loadObject(new TestVehicle(), "ABC123","vehicles");
+		// Sätter owner då loadObject inte är ansvarig över relaterade objekt
+		loadedVehicle.setOwner(testUser);
+		assertEquals(vehicle, loadedVehicle);
 	}
 }
