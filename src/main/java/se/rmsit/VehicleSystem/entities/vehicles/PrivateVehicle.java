@@ -12,4 +12,9 @@ public abstract class PrivateVehicle extends Vehicle {
 	public PrivateVehicle(String registrationNumber, int maximumPassengers, int wheels, Calendar constructionDate, double purchasePrice) {
 		super(registrationNumber, maximumPassengers, wheels, constructionDate, purchasePrice);
 	}
+
+	/**
+	 * Standard konstruktor, används för att skapa objekt från persistent lagring.
+	 */
+	public PrivateVehicle() {}
 }
