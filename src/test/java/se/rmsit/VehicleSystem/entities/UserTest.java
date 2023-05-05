@@ -3,14 +3,11 @@ package se.rmsit.VehicleSystem.entities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.Configuration;
-import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.TestHelper;
 import se.rmsit.VehicleSystem.TestUser;
-import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +15,7 @@ class UserTest {
 	@BeforeEach
 	void setup() throws IOException {
 		TestHelper.resetDataFiles();
+		User.recalculateNextEmailFromStorage();
 	}
 
 	@Test
@@ -72,5 +70,19 @@ class UserTest {
 		assertDoesNotThrow(testUser::delete);
 		assertNull(User.getById("1"));
 		assertFalse(new File(Configuration.getProperty("data_directory")+"/users/1.txt").exists());
+	}
+
+	@Test
+	void canGetNextId() throws IOException {
+		User testUser = new TestUser("1", "Test", "something", "test@testing.se", "aHash");
+		User testUser2 = new TestUser("2", "Test2", "something", "test2@testing.se", "aHash");
+		testUser.save();
+		testUser2.save();
+		testUser2.save();
+
+		assertEquals("3", User.getNextId());
+
+		User.recalculateNextEmailFromStorage();
+		assertEquals("3", User.getNextId());
 	}
 }

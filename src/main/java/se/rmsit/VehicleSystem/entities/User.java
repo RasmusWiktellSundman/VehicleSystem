@@ -13,6 +13,31 @@ public abstract class User implements Loginable, Fetchable {
 	private String email;
 	private String hashedPassword;
 
+	private static long highestUsedId;
+
+	static {
+		try {
+			recalculateNextEmailFromStorage();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void recalculateNextEmailFromStorage() throws IOException {
+		long highestId = 0;
+		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
+			try {
+				long id = Long.parseLong(fetchable.getId());
+				if(id > highestId) {
+					highestId = id;
+				}
+
+				// Ignorera ifall id:t inte är numeriskt (bör inte hända för användare)
+			} catch (NumberFormatException ignored) {}
+		}
+		highestUsedId = highestId;
+	}
+
 	/**
 	 * Standard konstruktor, används för att skapa objekt från persistent lagring.
 	 */
@@ -42,11 +67,23 @@ public abstract class User implements Loginable, Fetchable {
 	}
 
 	/**
+	 * Hämtar nästa lediga id
+	 * @return Id (numerisk string)
+	 */
+	public static String getNextId() {
+		return String.valueOf(highestUsedId+1);
+	}
+
+	/**
 	 * Sparar objektet till persistent lagring. Skriver över ifall användare med samma id redan finns.
 	 * @throws IOException
 	 */
 	public void save() throws IOException {
 		FileHandler.storeObject(this, "users");
+		long id = Long.parseLong(getId());
+		if(id > highestUsedId) {
+			highestUsedId = id;
+		}
 	}
 
 	/**
