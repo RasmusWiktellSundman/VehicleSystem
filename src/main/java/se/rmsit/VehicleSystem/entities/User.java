@@ -1,12 +1,11 @@
 package se.rmsit.VehicleSystem.entities;
 
 import se.rmsit.VehicleSystem.FileHandler;
-import se.rmsit.VehicleSystem.authentication.Loginable;
 
 import java.io.IOException;
 import java.util.Objects;
 
-public abstract class User implements Loginable, Fetchable {
+public abstract class User implements Fetchable {
 	private String id;
 	private String firstName;
 	private String lastName;
