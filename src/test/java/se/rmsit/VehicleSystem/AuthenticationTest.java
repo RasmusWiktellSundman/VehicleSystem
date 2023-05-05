@@ -58,7 +58,7 @@ class AuthenticationTest {
 	}
 
 	@Test
-	void cantGetLoggedInUserWhenNotLoggedIn() throws DuplicateEntityException, IOException {
+	void cantGetLoggedInUserWhenNotLoggedIn() throws IOException {
 		// Skapar ny användare
 		User user = new TestUser("1", "Test", null, "test@testing.se", "a_password");
 		user.save();
