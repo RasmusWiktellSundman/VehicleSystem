@@ -1,8 +1,5 @@
 package se.rmsit.VehicleSystem.entities;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Objects;
 
 public class Customer extends User {
@@ -31,13 +28,14 @@ public class Customer extends User {
 	}
 
 	@Override
-	public void store(PrintWriter printWriter) {
-		super.store(printWriter);
-		printWriter.println("address: " + getAddress());
-		printWriter.println("postcode: " + getPostcode());
-		printWriter.println("postTown: " + getPostTown());
-		printWriter.println("phoneNumber: " + getPhoneNumber());
-		printWriter.println("isPublicAuthority: " + isPublicAuthority());
+	public String serialize() {
+		String serialized = super.serialize() + "\n";
+		serialized += "address: " + getAddress() + "\n" +
+						"postcode: " + getPostcode() + "\n" +
+						"postTown: " + getPostTown() + "\n" +
+						"phoneNumber: " + getPhoneNumber() + "\n" +
+						"isPublicAuthority: " + isPublicAuthority();
+		return serialized;
 	}
 
 	/**

@@ -48,14 +48,14 @@ public abstract class Vehicle extends Entity implements Fetchable {
 	}
 
 	@Override
-	public void store(PrintWriter printWriter) {
-		printWriter.println("owner_id: " + getOwner().getId());
-		printWriter.println("registration_number: " + getRegistrationNumber());
-		printWriter.println("maximum_passengers: " + getMaximumPassengers());
-		printWriter.println("wheels: " + getWheels());
-		printWriter.println("construction_date: " + getConstructionDate().getTimeInMillis());
-		printWriter.println("bought_date: " + getBoughtDate().getTimeInMillis());
-		printWriter.println("purchase_price: " + getPurchasePrice());
+	public String serialize() {
+		return "owner_id: " + getOwner().getId() + "\n" +
+				"registration_number: " + getRegistrationNumber() + "\n" +
+				"maximum_passengers: " + getMaximumPassengers() + "\n" +
+				"wheels: " + getWheels() + "\n" +
+				"construction_date: " + getConstructionDate().getTimeInMillis() + "\n" +
+				"bought_date: " + getBoughtDate().getTimeInMillis() + "\n" +
+				"purchase_price: " + getPurchasePrice();
 	}
 
 	@Override

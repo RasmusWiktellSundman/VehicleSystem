@@ -37,7 +37,8 @@ public class FileHandler {
 		// Använder try-with-resource för att automatiskt stänga läsaren
 		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)))) {
 			writer.println("class: " + object.getClass().getName());
-			object.store(writer);
+			String serialized = object.serialize();
+			writer.write(serialized);
 		}
 	}
 

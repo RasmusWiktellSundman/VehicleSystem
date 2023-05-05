@@ -42,12 +42,12 @@ public abstract class User extends Entity implements Loginable {
 	}
 
 	@Override
-	public void store(PrintWriter printWriter) {
-		printWriter.println("user_id: " + getId());
-		printWriter.println("first_name: " + getFirstName());
-		printWriter.println("last_name: " + getLastName());
-		printWriter.println("email: " + getEmail());
-		printWriter.println("hashed_password: " + getHashedPassword());
+	public String serialize() {
+		return "user_id: " + getId() + "\n" +
+				"first_name: " + getFirstName() + "\n" +
+				"last_name: " + getLastName() + "\n" +
+				"email: " + getEmail() + "\n" +
+				"hashed_password: " + getHashedPassword();
 	}
 
 	@Override
