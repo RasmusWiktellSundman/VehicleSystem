@@ -43,6 +43,10 @@ public abstract class User implements Loginable, Fetchable {
 	 */
 	public User() {}
 
+	public User(String firstName, String lastName, String email, String hashedPassword) {
+		this(getNextId(), firstName, lastName, email, hashedPassword);
+	}
+
 	public User(String userId, String firstName, String lastName, String email, String hashedPassword) {
 		this.id = userId;
 		this.firstName = firstName;

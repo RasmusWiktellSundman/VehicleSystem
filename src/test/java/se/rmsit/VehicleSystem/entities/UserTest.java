@@ -85,4 +85,18 @@ class UserTest {
 		User.recalculateNextEmailFromStorage();
 		assertEquals("3", User.getNextId());
 	}
+
+	@Test
+	void canCreateUserWithAutomaticId() throws IOException {
+		User testUser1 = new TestUser("Test", "something", "test@testing.se", "aHash");
+		testUser1.save();
+		User testUser2 = new TestUser("Test2", "something", "test2@testing.se", "aHash");
+		testUser2.save();
+
+		User expected1 = new TestUser("1", "Test", "something", "test@testing.se", "aHash");
+		User expected2 = new TestUser("2", "Test2", "something", "test2@testing.se", "aHash");
+
+		assertEquals(expected1, testUser1);
+		assertEquals(expected2, testUser2);
+	}
 }
