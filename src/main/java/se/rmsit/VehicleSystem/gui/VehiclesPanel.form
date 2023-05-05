@@ -57,6 +57,7 @@
             <constraints/>
             <properties>
               <autoCreateRowSorter value="true"/>
+              <enabled value="false"/>
               <foreground color="-12828863"/>
               <gridColor color="-12828863"/>
               <selectionForeground color="-12828863"/>
