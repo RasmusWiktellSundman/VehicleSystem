@@ -92,9 +92,6 @@ public class RepairLog implements Fetchable {
 	 */
 	@Override
 	public void loadData(String key, String value) {
-		System.out.println(key);
-		System.out.println(value);
-		System.out.println("---");
 		switch (key) {
 			case "repair_id" -> setId(value);
 			case "date" -> {
