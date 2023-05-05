@@ -1,4 +1,4 @@
-package se.rmsit.VehicleSystem.views;
+package se.rmsit.VehicleSystem.gui;
 
 import javax.swing.*;
 

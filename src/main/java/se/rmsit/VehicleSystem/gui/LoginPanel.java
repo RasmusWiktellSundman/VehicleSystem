@@ -1,11 +1,9 @@
-package se.rmsit.VehicleSystem.views;
+package se.rmsit.VehicleSystem.gui;
 
 import se.rmsit.VehicleSystem.authentication.Authentication;
 import se.rmsit.VehicleSystem.exceptions.InvalidLoginCredentials;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class LoginPanel extends PanelContainer {

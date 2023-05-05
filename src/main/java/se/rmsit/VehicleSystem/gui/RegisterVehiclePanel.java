@@ -1,4 +1,4 @@
-package se.rmsit.VehicleSystem.views;
+package se.rmsit.VehicleSystem.gui;
 
 import se.rmsit.VehicleSystem.authentication.Authentication;
 import se.rmsit.VehicleSystem.entities.Customer;

@@ -1,7 +1,7 @@
 package se.rmsit.VehicleSystem;
 
 import se.rmsit.VehicleSystem.authentication.Authentication;
-import se.rmsit.VehicleSystem.views.MainFrame;
+import se.rmsit.VehicleSystem.gui.MainFrame;
 
 public class VehicleSystem {
 	public static void main(String[] args) {
