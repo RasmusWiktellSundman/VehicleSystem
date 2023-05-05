@@ -1,7 +1,6 @@
 package se.rmsit.VehicleSystem.entities.vehicles;
 
 import se.rmsit.VehicleSystem.FileHandler;
-import se.rmsit.VehicleSystem.entities.Entity;
 import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.User;
 
@@ -11,7 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Vehicle extends Entity implements Fetchable {
+public abstract class Vehicle implements Fetchable {
 	// Sparar endast ägarens id och inte hela objektet för att undvika synkroniseringsfel mellan persistent lagring och minne
 	private String ownerId;
 	private String registrationNumber;

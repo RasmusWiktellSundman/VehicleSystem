@@ -4,11 +4,9 @@ import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.authentication.Loginable;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 import java.util.Objects;
 
-public abstract class User extends Entity implements Loginable {
+public abstract class User implements Loginable, Fetchable {
 	private String id;
 	private String firstName;
 	private String lastName;
