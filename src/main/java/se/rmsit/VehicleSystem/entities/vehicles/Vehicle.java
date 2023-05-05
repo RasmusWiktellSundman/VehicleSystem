@@ -45,11 +45,23 @@ public abstract class Vehicle implements Fetchable {
 	 */
 	public Vehicle() {}
 
+	/**
+	 * Hämtar fordon med angivet registreringsnummer
+	 * @param registrationNumber Registreringsnummret av fordonet som eftersöks
+	 * @return Fordonet eller null
+	 * @throws IOException
+	 */
 	public static Vehicle getByRegistrationNumber(String registrationNumber) throws IOException {
 		// Hämtar användare från persistent lagring
 		return (Vehicle) FileHandler.loadObject(registrationNumber, "vehicles");
 	}
 
+	/**
+	 * Hämtar en kunds alla fordon
+	 * @param owner Kunden att hämta fordon för
+	 * @return Alla kundens fordon
+	 * @throws IOException
+	 */
 	public static List<Vehicle> getByOwner(Customer owner) throws IOException {
 		List<Vehicle> vehicles = new ArrayList<>();
 		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
@@ -61,6 +73,11 @@ public abstract class Vehicle implements Fetchable {
 		return vehicles;
 	}
 
+	/**
+	 * Hämtar alla fordon
+	 * @return Alla fordon
+	 * @throws IOException
+	 */
 	public static List<Vehicle> getAll() throws IOException {
 		List<Vehicle> vehicles = new ArrayList<>();
 		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
@@ -143,11 +160,21 @@ public abstract class Vehicle implements Fetchable {
 		return value;
 	}
 
+	/**
+	 * Lägger till en reparation till fordonet
+	 * @param description Vad som gjorts under reparationen
+	 * @param date När reparationen genomfördes
+	 * @throws IOException
+	 */
 	public void addRepair(String description, Calendar date) throws IOException {
 		RepairLog repairLog = new RepairLog(date, description, getOwner(), this);
 		repairLog.save();
 	}
 
+	/**
+	 * Serialiszrar datan, för att kunna sparas i fil
+	 * @return Serializerad data
+	 */
 	@Override
 	public String serialize() {
 		return "owner_id: " + getOwner().getId() + "\n" +
@@ -160,6 +187,11 @@ public abstract class Vehicle implements Fetchable {
 				"purchase_price: " + getPurchasePrice();
 	}
 
+	/**
+	 * Laddar in värde från key-value
+	 * @param key Nyckeln för värdet
+	 * @param value Värdet
+	 */
 	@Override
 	public void loadData(String key, String value) {
 		switch (key) {
@@ -217,7 +249,7 @@ public abstract class Vehicle implements Fetchable {
 
 	// Getters och setters
 
-	// Krävs för Fetchable
+	// getId() krävs för Fetchable
 	@Override
 	public String getId() {
 		return getRegistrationNumber();

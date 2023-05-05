@@ -13,7 +13,7 @@ class CustomerTest {
 	@BeforeEach
 	void setup() throws IOException {
 		TestHelper.resetDataFiles();
-		Customer.recalculateNextEmailFromStorage();
+		Customer.recalculateNextUserIdFromStorage();
 	}
 
 	@Test

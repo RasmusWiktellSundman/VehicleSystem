@@ -16,13 +16,17 @@ public abstract class User implements Fetchable {
 
 	static {
 		try {
-			recalculateNextEmailFromStorage();
+			recalculateNextUserIdFromStorage();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static void recalculateNextEmailFromStorage() throws IOException {
+	/**
+	 * Kalkulerar vilket nästa lediga id är, uppdaterar medlemsvariabel
+	 * @throws IOException
+	 */
+	public static void recalculateNextUserIdFromStorage() throws IOException {
 		long highestId = 0;
 		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
 			try {
@@ -54,11 +58,21 @@ public abstract class User implements Fetchable {
 		setHashedPassword(hashedPassword);
 	}
 
+	/**
+	 * Hämtar användare med visst id
+	 * @param id Idt av användaren som söks
+	 * @return User eller null
+	 */
 	public static User getById(String id) throws IOException {
 		// Hämtar användare från persistent lagring
 		return (User) FileHandler.loadObject(id, "users");
 	}
 
+	/**
+	 * Hämtar användare med viss e-post
+	 * @param email e-posten av användaren som söks
+	 * @return User eller null
+	 */
 	public static User getByEmail(String email) throws IOException {
 		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
 			// Kollar om e-posten från den inlästa användaren är samma som den givna e-posten
@@ -113,6 +127,10 @@ public abstract class User implements Fetchable {
 		}
 	}
 
+	/**
+	 * Serialiszrar datan, för att kunna sparas i fil
+	 * @return Serializerad data
+	 */
 	@Override
 	public String serialize() {
 		return "user_id: " + getId() + "\n" +

@@ -46,6 +46,11 @@ public class RepairLog implements Fetchable {
 		setVehicle(vehicle);
 	}
 
+	/**
+	 * Hämtar reparation med visst id
+	 * @param id Idt av reparationen som söks
+	 * @return Reparationen eller null
+	 */
 	public static RepairLog getById(String id) {
 		for (RepairLog repair : repairs) {
 			if(repair.getId().equals(id))
@@ -54,21 +59,38 @@ public class RepairLog implements Fetchable {
 		return null;
 	}
 
+	/**
+	 * Hämtar alla reparationer
+	 * @return Alla reparationer
+	 */
 	public static List<RepairLog> getAll() {
 		return repairs;
 	}
 
+	/**
+	 * Hämtar alla reparationer för ett visst fordon
+	 * @param vehicle Fordon att hämta reparationer för
+	 * @return Ett fordons reparationer
+	 */
 	public static List<RepairLog> getAllByVehicle(Vehicle vehicle) {
 		return repairs.stream().filter(
 				repairLog -> repairLog.getVehicleRegistrationNumber().equals(vehicle.getRegistrationNumber())
 		).toList();
 	}
 
+	/**
+	 * Nästa lediga id
+	 * @return Nästa lediga id
+	 */
 	public static String getNextId() {
 		// Alla idn är av typen string, då Fetchable kräver det, men för reparationer är idn numeriska
 		return String.valueOf(repairs.size() + 1);
 	}
 
+	/**
+	 * Spara till persistent lagring
+	 * @throws IOException
+	 */
 	public void save() throws IOException {
 		if(!repairs.contains(this)) {
 			repairs.add(this);
@@ -76,6 +98,10 @@ public class RepairLog implements Fetchable {
 		}
 	}
 
+	/**
+	 * Serialiszrar datan, för att kunna sparas i fil
+	 * @return Serializerad data
+	 */
 	@Override
 	public String serialize() {
 		return "repair_id: " + getId() + "\n" +

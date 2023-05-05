@@ -15,7 +15,7 @@ class UserTest {
 	@BeforeEach
 	void setup() throws IOException {
 		TestHelper.resetDataFiles();
-		User.recalculateNextEmailFromStorage();
+		User.recalculateNextUserIdFromStorage();
 	}
 
 	@Test
@@ -82,7 +82,7 @@ class UserTest {
 
 		assertEquals("3", User.getNextId());
 
-		User.recalculateNextEmailFromStorage();
+		User.recalculateNextUserIdFromStorage();
 		assertEquals("3", User.getNextId());
 	}
 
