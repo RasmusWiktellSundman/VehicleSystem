@@ -10,9 +10,10 @@ public interface Fetchable {
 	String serialize();
 
 	/**
-	 * Laddar in objektet från BufferedRader
-	 * @param reader BufferedReader med data att skapa object från.
+	 * Laddar in ett nyckel-data par från persistent lagring
+	 * @param key Nyckeln för värdet
+	 * @param value Värdet
 	 */
-	void load(BufferedReader reader) throws IOException;
+	void loadData(String key, String value);
 	String getId();
 }

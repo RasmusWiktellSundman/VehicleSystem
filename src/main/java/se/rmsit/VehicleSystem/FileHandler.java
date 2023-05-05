@@ -44,7 +44,8 @@ public class FileHandler {
 	public static Fetchable loadObject(Fetchable fetchable, String id, String subPath) throws IOException {
 		File file = new File(dataDirectoryPath+"\\"+subPath+"\\"+id+".txt");
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-			fetchable.load(reader);
+			// Läser in data från filen och sparar i objektet
+			loadOneObject(fetchable, reader);
 			return fetchable;
 		}
 	}
@@ -75,7 +76,7 @@ public class FileHandler {
 			Fetchable fetchable = (Fetchable) constructor.newInstance();
 
 			// Läser in data från filen och sparar i objektet
-			fetchable.load(reader);
+			loadOneObject(fetchable, reader);
 			return fetchable;
 		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
@@ -85,8 +86,6 @@ public class FileHandler {
 		} catch (FileNotFoundException e) {
 			return null;
 		}
-
-
 	}
 
 	public static void deleteObject(String id, String subPath) throws IOException {
@@ -110,8 +109,6 @@ public class FileHandler {
 		for (File file : directory.listFiles()) {
 			// Använder try-with-resource för att automatiskt stänga läsaren
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-
-
 				// Skapar objekt utifrån klass i datafil
 				// Första raden ska följa formatet class: klass-namn
 				// Skapar nytt objekt från clazz
@@ -122,7 +119,7 @@ public class FileHandler {
 				Fetchable fetchable = (Fetchable) constructor.newInstance();
 
 				// Läser in data från filen och sparar i objektet
-				fetchable.load(reader);
+				loadOneObject(fetchable, reader);
 				fetchables.add(fetchable);
 			} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -133,5 +130,23 @@ public class FileHandler {
 		}
 
 		return fetchables;
+	}
+
+	private static void loadOneObject(Fetchable fetchable, BufferedReader reader) throws IOException {
+		// Skapar objekt från reader data (samma som store metoden)
+		while (true) {
+			String line = reader.readLine();
+			// Om filen innehåller flera objekt separeras de av "----"
+			if(line == null || line.equals("----")) {
+				break;
+			}
+			// Delar upp raden i nyckel-data par
+			String[] tokens = line.split(": ");
+			String data = tokens[1];
+			if(data.equals("null")) {
+				data = null;
+			}
+			fetchable.loadData(tokens[0], data);
+		}
 	}
 }
