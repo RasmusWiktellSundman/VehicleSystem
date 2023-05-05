@@ -3,6 +3,7 @@ package se.rmsit.VehicleSystem.entities.vehicles;
 import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.Fetchable;
+import se.rmsit.VehicleSystem.entities.RepairLog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -213,5 +214,14 @@ public abstract class Vehicle implements Fetchable {
 
 	public String getOwnerId() {
 		return ownerId;
+	}
+
+	public void addRepair(String description, Calendar date) throws IOException {
+		RepairLog repairLog = new RepairLog(date, description, getOwner(), this);
+		repairLog.save();
+	}
+
+	public List<RepairLog> getRepairs() {
+		return RepairLog.getAllByVehicle(this);
 	}
 }

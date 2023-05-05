@@ -34,6 +34,10 @@ public class RepairLog implements Fetchable {
 	 */
 	public RepairLog() {}
 
+	public RepairLog(Calendar date, String description, Customer customer, Vehicle vehicle) {
+		this(RepairLog.getNextId(), date, description, customer,vehicle);
+	}
+
 	public RepairLog(String id, Calendar date, String description, Customer customer, Vehicle vehicle) {
 		setId(id);
 		setDate(date);
@@ -52,6 +56,17 @@ public class RepairLog implements Fetchable {
 
 	public static List<RepairLog> getAll() {
 		return repairs;
+	}
+
+	public static List<RepairLog> getAllByVehicle(Vehicle vehicle) {
+		return repairs.stream().filter(
+				repairLog -> repairLog.getVehicleRegistrationNumber().equals(vehicle.getRegistrationNumber())
+		).toList();
+	}
+
+	public static String getNextId() {
+		// Alla idn är av typen string, då Fetchable kräver det, men för reparationer är idn numeriska
+		return String.valueOf(repairs.size() + 1);
 	}
 
 	public void save() throws IOException {

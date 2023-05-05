@@ -6,6 +6,7 @@ import se.rmsit.VehicleSystem.Configuration;
 import se.rmsit.VehicleSystem.TestHelper;
 import se.rmsit.VehicleSystem.TestVehicle;
 import se.rmsit.VehicleSystem.entities.Customer;
+import se.rmsit.VehicleSystem.entities.RepairLog;
 import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
 
 import java.io.File;
@@ -18,8 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class VehicleTest {
 	Customer testCustomer;
 	@BeforeEach
-	void setup() throws IOException, DuplicateEntityException {
+	void setup() throws IOException {
 		TestHelper.resetDataFiles();
+		RepairLog.reloadAllRepairLogsFromStorage();
 		testCustomer = new Customer("1", "Test", "Dev", null, null, null, null, false, "test@testing.se", "hej");
 		testCustomer.save();
 	}
@@ -75,5 +77,29 @@ class VehicleTest {
 
 		List<Vehicle> expected = List.of(testVehicle, testVehicle3);
 		assertEquals(expected, Vehicle.getByOwner(testCustomer));
+	}
+
+	@Test
+	void canAddRepair() throws IOException {
+		// Skapar fordon
+		Calendar today = Calendar.getInstance();
+		Vehicle testVehicle = new TestVehicle(testCustomer, "ABC123", 4, 4, today, today, 100.1);
+		testVehicle.save();
+		assertDoesNotThrow(() -> testVehicle.addRepair("A description", today));
+
+		RepairLog expected = new RepairLog("1", today, "A description", testCustomer, testVehicle);
+		assertEquals(List.of(expected), RepairLog.getAllByVehicle(testVehicle));
+	}
+
+	@Test
+	void canGetRepairs() throws IOException {
+		// Skapar fordon
+		Calendar today = Calendar.getInstance();
+		Vehicle testVehicle = new TestVehicle(testCustomer, "ABC123", 4, 4, today, today, 100.1);
+		testVehicle.save();
+		testVehicle.addRepair("A description", today);
+
+		RepairLog expected = new RepairLog("1", today, "A description", testCustomer, testVehicle);
+		assertEquals(List.of(expected), testVehicle.getRepairs());
 	}
 }

@@ -107,7 +107,7 @@ class RepairLogTest {
 		RepairLog repairLog = new RepairLog("1", today, "Testing", testCustomer, testVehicle);
 		repairLog.save();
 
-		// Raderar kund
+		// Raderar fordon
 		testVehicle.delete();
 
 		assertThrows(VehicleDoesntExistException.class, repairLog::getVehicle);
@@ -145,6 +145,49 @@ class RepairLogTest {
 	}
 
 	@Test
-	void getVehicle() {
+	void canGetRepairLogsByVehicle() throws IOException {
+		Calendar today = Calendar.getInstance();
+		Vehicle testVehicle2 = new TestVehicle(testCustomer, "ABC124", 4, 4, today, today, 1000);
+		testVehicle2.save();
+
+		RepairLog repairLog = new RepairLog("1", today, "Testing", testCustomer, testVehicle);
+		repairLog.save();
+		RepairLog repairLog2 = new RepairLog("2", today, "Testing3", testCustomer, testVehicle2);
+		repairLog2.save();
+		RepairLog repairLog3 = new RepairLog("3", today, "Testing3", testCustomer, testVehicle);
+		repairLog3.save();
+
+		List<RepairLog> expected = List.of(repairLog, repairLog3);
+		assertEquals(expected, RepairLog.getAllByVehicle(testVehicle));
+	}
+
+	@Test
+	void canGetNextId() throws IOException {
+		Calendar today = Calendar.getInstance();
+		RepairLog repairLog = new RepairLog("1", today, "Testing", testCustomer, testVehicle);
+		repairLog.save();
+		RepairLog repairLog2 = new RepairLog("2", today, "Testing", testCustomer, testVehicle);
+		repairLog2.save();
+		RepairLog repairLog3 = new RepairLog("3", today, "Testing", testCustomer, testVehicle);
+		repairLog3.save();
+
+		assertEquals("4", RepairLog.getNextId());
+	}
+
+	@Test
+	void canAddRepairsWithAutomaticId() throws IOException {
+		Calendar today = Calendar.getInstance();
+		RepairLog repairLog = new RepairLog(today, "Testing", testCustomer, testVehicle);
+		repairLog.save();
+		RepairLog repairLog2 = new RepairLog(today, "Testing", testCustomer, testVehicle);
+		repairLog2.save();
+		RepairLog repairLog3 = new RepairLog(today, "Testing", testCustomer, testVehicle);
+		repairLog3.save();
+
+		RepairLog repairLogExpected1 = new RepairLog("1", today, "Testing", testCustomer, testVehicle);
+		RepairLog repairLogExpected2 = new RepairLog("2", today, "Testing", testCustomer, testVehicle);
+		RepairLog repairLogExpected3 = new RepairLog("3", today, "Testing", testCustomer, testVehicle);
+		List<RepairLog> expected = List.of(repairLogExpected1, repairLogExpected2, repairLogExpected3);
+		assertEquals(expected, RepairLog.getAll());
 	}
 }
