@@ -6,6 +6,7 @@ import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.RepairLog;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -74,6 +75,61 @@ public abstract class Vehicle implements Fetchable {
 	 */
 	public void delete() throws IOException {
 		FileHandler.deleteObject(getId(), "vehicles");
+	}
+
+	/**
+	 * Kalkylerar fordonets värde
+	 * @return Fordonets värde
+	 */
+	public double getValue() {
+		double value = getPurchasePrice();
+		List<RepairLog> repairs = RepairLog.getAllByVehicle(this);
+		Calendar now = Calendar.getInstance();
+
+		// Start och slut beräknas från när bilen är konstruerad, inte kalenderår
+		Calendar year_start = Calendar.getInstance();
+		year_start.setTimeInMillis(getConstructionDate().getTimeInMillis());
+		Calendar year_end = Calendar.getInstance();
+		year_end.setTimeInMillis(getConstructionDate().getTimeInMillis());
+		year_end.add(Calendar.YEAR, 1);
+
+		// Loopar så länge datumet är före nu, varje varv motsvarar ett fullständigt år
+		while(year_end.before(now) || year_end.equals(now)) {
+			// Beräknar antal reparationer under året
+			long amountOfRepairs = repairs.stream().filter(
+					repairLog -> year_start.equals(repairLog.getDate()) ||
+							(year_start.before(repairLog.getDate()) && year_end.after(repairLog.getDate()))
+			).count();
+
+			// Ökar värdet med 20% för varje reparation
+			value *= Math.pow(1.2, amountOfRepairs);
+
+			// Kollar om värdet är mer än 100%
+			if(value > getPurchasePrice()) {
+				value = getPurchasePrice();
+			}
+
+			// Subtraherar 10% av värdet
+			value *= 0.9;
+
+			// Uppdaterar variabler för kommande år
+			year_start.add(Calendar.YEAR, 1);
+			year_end.add(Calendar.YEAR, 1);
+		}
+
+		// Lägger till värdet för reparationer som utförts under senaste ofullständiga år
+		long amountOfRepairs = repairs.stream().filter(
+				repairLog -> year_start.equals(repairLog.getDate()) || year_start.before(repairLog.getDate())
+		).count();
+		// Ökar värdet med 20% för varje reparation
+		value *= Math.pow(1.2, amountOfRepairs);
+
+		// Kollar om värdet är mer än 100%
+		if(value > getPurchasePrice()) {
+			value = getPurchasePrice();
+		}
+
+		return value;
 	}
 
 	@Override
