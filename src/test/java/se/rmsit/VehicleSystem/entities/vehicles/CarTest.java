@@ -3,7 +3,6 @@ package se.rmsit.VehicleSystem.entities.vehicles;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.TestUser;
-import se.rmsit.VehicleSystem.UserType;
 
 import java.util.Calendar;
 
@@ -21,14 +20,14 @@ class CarTest {
 	@Test
 	void throwsOnNegativeMaxPassengers() {
 		Calendar today = Calendar.getInstance();
-		assertThrows(IllegalArgumentException.class, () -> new Car(new TestUser(1, "Test", "test@testin.se", "something", "no_hashing", UserType.CUSTOMER), "abc", -1, 4, today, today, 10));
+		assertThrows(IllegalArgumentException.class, () -> new Car(new TestUser(1, "Test", "test@testin.se", "something", "no_hashing"), "abc", -1, 4, today, today, 10));
 		assertThrows(IllegalArgumentException.class, () -> car.setMaximumPassengers(-1));
 	}
 
 	@Test
 	void throwsOnNegativeWheels() {
 		Calendar today = Calendar.getInstance();
-		assertThrows(IllegalArgumentException.class, () -> new Car(new TestUser(1, "Test", "test@testin.se", "something", "no_hashing", UserType.CUSTOMER), "abc", 1, -4, today, today, 10));
+		assertThrows(IllegalArgumentException.class, () -> new Car(new TestUser(1, "Test", "test@testin.se", "something", "no_hashing"), "abc", 1, -4, today, today, 10));
 		assertThrows(IllegalArgumentException.class, () -> car.setWheels(-1));
 	}
 
@@ -38,7 +37,7 @@ class CarTest {
 		Calendar yesterday = Calendar.getInstance();
 		yesterday.add(Calendar.DATE, -1);
 
-		assertThrows(IllegalArgumentException.class, () -> new Car(new TestUser(1, "Test", "test@testin.se", "something", "no_hashing", UserType.CUSTOMER), "abc", 1, 4, today, yesterday, 10));
+		assertThrows(IllegalArgumentException.class, () -> new Car(new TestUser(1, "Test", "test@testin.se", "something", "no_hashing"), "abc", 1, 4, today, yesterday, 10));
 		assertThrows(IllegalArgumentException.class, () -> car.setBoughtDate(yesterday));
 	}
 }

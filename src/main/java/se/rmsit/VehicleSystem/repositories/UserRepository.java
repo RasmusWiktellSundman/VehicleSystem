@@ -1,6 +1,7 @@
 package se.rmsit.VehicleSystem.repositories;
 
 import se.rmsit.VehicleSystem.FileHandler;
+import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
@@ -10,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * UserRepository är ansvarig för alla klasser som ärver av User
+ */
 public class UserRepository {
 	private List<User> users = new ArrayList<>();
 
@@ -20,7 +24,9 @@ public class UserRepository {
 	private void loadUsers() throws IOException {
 		// Populerar users array med data från persistent lagring
 		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
-			users.add((User) fetchable);
+			if(fetchable instanceof Customer) {
+				users.add((Customer) fetchable);
+			}
 		}
 	}
 

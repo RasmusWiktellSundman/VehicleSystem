@@ -1,7 +1,6 @@
 package se.rmsit.VehicleSystem.entities;
 
 import se.rmsit.VehicleSystem.Loginable;
-import se.rmsit.VehicleSystem.UserType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +13,6 @@ public abstract class User implements Loginable, Fetchable {
 	private String lastName;
 	private String email;
 	private String hashedPassword;
-	private UserType userType;
 
 	@Override
 	public User login(String userNameOrEmail, String password) {
@@ -26,13 +24,12 @@ public abstract class User implements Loginable, Fetchable {
 	 */
 	public User() {}
 
-	public User(long userId, String firstName, String lastName, String email, String hashedPassword, UserType userType) {
+	public User(long userId, String firstName, String lastName, String email, String hashedPassword) {
 		this.id = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.hashedPassword = hashedPassword;
-		this.userType = userType;
 	}
 
 	@Override
@@ -45,13 +42,16 @@ public abstract class User implements Loginable, Fetchable {
 			}
 			// Delar upp raden i nyckel-data par
 			String[] tokens = line.split(": ");
+			String data = tokens[1];
+			if(data.equals("null")) {
+				data = null;
+			}
 			switch (tokens[0]) {
-				case "user_id" -> setId(Long.parseLong(tokens[1]));
-				case "first_name" -> setFirstName(tokens[1]);
-				case "last_name" -> setLastName(tokens[1]);
-				case "email" -> setEmail(tokens[1]);
-				case "hashed_password" -> setHashedPassword(tokens[1]);
-				case "user_type" -> setUserType(UserType.valueOf(tokens[1]));
+				case "user_id" -> setId(Long.parseLong(data));
+				case "first_name" -> setFirstName(data);
+				case "last_name" -> setLastName(data);
+				case "email" -> setEmail(data);
+				case "hashed_password" -> setHashedPassword(data);
 			}
 		}
 	}
@@ -64,20 +64,18 @@ public abstract class User implements Loginable, Fetchable {
 		printWriter.println("last_name: " + getLastName());
 		printWriter.println("email: " + getEmail());
 		printWriter.println("hashed_password: " + getHashedPassword());
-		printWriter.println("user_type: " + getUserType().toString());
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+	public boolean equals(Object customer) {
+		if (this == customer) return true;
+		if (customer == null || getClass() != customer.getClass()) return false;
 
-		User user = (User) o;
+		User user = (User) customer;
 		if (id != user.id) return false;
 		if (!Objects.equals(firstName, user.firstName)) return false;
 		if (!Objects.equals(lastName, user.lastName)) return false;
 		if (!Objects.equals(email, user.email)) return false;
-		if (userType != user.userType) return false;
 		return Objects.equals(hashedPassword, user.hashedPassword);
 	}
 
@@ -89,7 +87,6 @@ public abstract class User implements Loginable, Fetchable {
 				", lastName='" + lastName + '\'' +
 				", email='" + email + '\'' +
 				", hashedPassword='" + hashedPassword + '\'' +
-				", userType=" + userType +
 				'}';
 	}
 
@@ -124,6 +121,7 @@ public abstract class User implements Loginable, Fetchable {
 	}
 
 	public void setEmail(String email) {
+		//TODO: Validera format
 		this.email = email;
 	}
 
@@ -133,13 +131,5 @@ public abstract class User implements Loginable, Fetchable {
 
 	public void setHashedPassword(String hashedPassword) {
 		this.hashedPassword = hashedPassword;
-	}
-
-	public UserType getUserType() {
-		return userType;
-	}
-
-	public void setUserType(UserType userType) {
-		this.userType = userType;
 	}
 }

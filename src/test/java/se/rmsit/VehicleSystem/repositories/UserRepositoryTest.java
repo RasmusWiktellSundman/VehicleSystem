@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import se.rmsit.VehicleSystem.Configuration;
 import se.rmsit.VehicleSystem.TestHelper;
 import se.rmsit.VehicleSystem.TestUser;
-import se.rmsit.VehicleSystem.UserType;
+import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.exceptions.DuplicateEntityException;
 
@@ -17,6 +17,7 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,15 +32,15 @@ class UserRepositoryTest {
 
 	@Test
 	void repositoryCanStoreUser() {
-		User testUser = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
+		User testUser = new TestUser(1, "Test", "something", "test@testing.se", "aHash");
 		assertDoesNotThrow(() -> userRepository.update(testUser));
 		assertTrue(new File(Configuration.getProperty("data_directory")+"/users/1.txt").exists());
 	}
 
 	@Test
 	void canGetUserByIdFromRepository() throws IOException, DuplicateEntityException {
-		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
-		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing", UserType.ADMIN);
+		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash");
+		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing");
 		userRepository.update(testCustomer);
 		userRepository.update(testAdmin);
 
@@ -54,8 +55,8 @@ class UserRepositoryTest {
 
 	@Test
 	void canGetUserByEmailFromRepository() throws IOException, DuplicateEntityException {
-		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
-		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing", UserType.ADMIN);
+		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash");
+		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing");
 		userRepository.update(testCustomer);
 		userRepository.update(testAdmin);
 
@@ -65,8 +66,8 @@ class UserRepositoryTest {
 
 	@Test
 	void canGetAllUsersFromRepository() throws IOException, DuplicateEntityException {
-		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
-		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing", UserType.ADMIN);
+		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash");
+		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing");
 		userRepository.update(testCustomer);
 		userRepository.update(testAdmin);
 
@@ -76,16 +77,16 @@ class UserRepositoryTest {
 
 	@Test
 	void cantAddSameEmailMultipleTimes() throws IOException, DuplicateEntityException {
-		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
-		User testCustomer2 = new TestUser(2, "Test2", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
+		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash");
+		User testCustomer2 = new TestUser(2, "Test2", "something", "test@testing.se", "aHash");
 		userRepository.update(testCustomer);
 		assertThrows(DuplicateEntityException.class, () -> userRepository.update(testCustomer2));
 	}
 
 	@Test
 	void canDeleteUser() throws IOException, DuplicateEntityException {
-		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
-		User testCustomer2 = new TestUser(2, "Test2", "something", "test2@testing.se", "aHash", UserType.CUSTOMER);
+		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash");
+		User testCustomer2 = new TestUser(2, "Test2", "something", "test2@testing.se", "aHash");
 		userRepository.update(testCustomer);
 		userRepository.update(testCustomer2);
 		assertDoesNotThrow(() -> userRepository.delete(testCustomer2));
@@ -96,15 +97,29 @@ class UserRepositoryTest {
 
 	@Test
 	void canLoadAllFromFile() throws DuplicateEntityException, IOException {
-		User testCustomer = new TestUser(1, "Test", "something", "test@testing.se", "aHash", UserType.CUSTOMER);
-		User testAdmin = new TestUser(2, "Admin", "something", "admin@testing.se", "no_hashing", UserType.ADMIN);
+		// Använder Customer, då UserRepository inläsning av alla användare från filer inte stödjer TestUser
+		Customer testCustomer = new Customer(1, "Customer", null, null, null, null, false, "customer@testing.se", "no_hashing");
+		Customer testCustomer2 = new Customer(2, "Customer", null, null, null, null, false, "customer2@testing.se", "no_hashing");
 		userRepository.update(testCustomer);
-		userRepository.update(testAdmin);
+		userRepository.update(testCustomer2);
 
 		// Skapar nytt repository för att ladda in från fil
 		userRepository = new UserRepository();
 
-		List<User> expected = List.of(testCustomer, testAdmin);
-		assertEquals(expected, userRepository.getAll());
+		List<User> expected = List.of(testCustomer, testCustomer2);
+		assertIterableEquals(expected, userRepository.getAll());
+	}
+
+	@Test
+	void canLoadCustomer() throws DuplicateEntityException, IOException {
+		Customer testCustomer = new Customer(1, "Customer", null, null, null, null, false, "customer@testing.se", "no_hashing");
+		Customer testCustomer2 = new Customer(2, "Customer", null, null, null, null, false, "customer2@testing.se", "no_hashing");
+		userRepository.update(testCustomer);
+		userRepository.update(testCustomer2);
+
+		// Skapar nytt repository för att ladda in från fil
+		userRepository = new UserRepository();
+
+		assertDoesNotThrow(() -> (Customer) userRepository.getById(1).get());
 	}
 }
