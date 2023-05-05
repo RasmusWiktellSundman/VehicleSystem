@@ -43,7 +43,6 @@ public abstract class User extends Entity implements Loginable {
 
 	@Override
 	public void store(PrintWriter printWriter) {
-		printWriter.println("class: " + getClass().getName());
 		printWriter.println("user_id: " + getId());
 		printWriter.println("first_name: " + getFirstName());
 		printWriter.println("last_name: " + getLastName());
