@@ -7,13 +7,13 @@ import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
 import java.io.IOException;
 
 public class Authentication {
-	private Loginable loggedInUser;
+	private User loggedInUser;
 
 
 	// Auth klassen följer singleton designmönstret
 	public Authentication() {}
 
-	public Loginable login(String email, String password) throws InvalidLoginCredentials, IOException {
+	public User login(String email, String password) throws InvalidLoginCredentials, IOException {
 		User user = User.getByEmail(email);
 		if(user == null) {
 			throw new InvalidLoginCredentials();
@@ -31,10 +31,14 @@ public class Authentication {
 	 * @return Den inloggade användaren
 	 * @throws NoLoggedInUser Ifall ingen är inloggad
 	 */
-	public Loginable getUser() throws NoLoggedInUser {
+	public User getUser() throws NoLoggedInUser {
 		if(loggedInUser == null)
 			throw new NoLoggedInUser();
 		return loggedInUser;
+	}
+
+	public boolean isLoggedIn() {
+		return loggedInUser != null;
 	}
 
 	public void logout() {
