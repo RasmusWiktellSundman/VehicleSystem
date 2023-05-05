@@ -106,7 +106,7 @@ public class RegisterVehiclePanel extends PanelContainer {
 						// Skapar ny buss, om ägaren är en kommun
 						if(!owner.isPublicAuthority()) {
 							String errorMessage = "Endast kommuner kan registrera bussar";
-							if(authentication.getUser() instanceof Admin) {
+							if(authentication.isAdmin()) {
 								errorMessage = "Ägaren måste vara en kommun för att kunna äga bussen";
 							}
 							showError(errorMessage);
@@ -133,10 +133,10 @@ public class RegisterVehiclePanel extends PanelContainer {
 				success.setText("Fordon registrerat!");
 				success.setVisible(true);
 				clearFields();
-			} catch (NoLoggedInUser ex) {
-				showError("Fordon registrerat!");
 			} catch (IOException ex) {
 				showError("Misslyckades spara fordon");
+			} catch (NoLoggedInUser ex) {
+				showError("Du måste vara inloggad!");
 			}
 		});
 
@@ -167,15 +167,9 @@ public class RegisterVehiclePanel extends PanelContainer {
 		}
 
 		// Visa endast ägarefältet för administratörer
-		ownerLabel.setVisible(false);
-		ownerField.setVisible(false);
-		try {
-			if(authentication.getUser() instanceof Admin) {
-				ownerLabel.setVisible(true);
-				ownerField.setVisible(true);
-			}
-		// Visar inte ägarefältet ifall ingen är inloggad
-		} catch (NoLoggedInUser ignored) {}
+		boolean showOwnerField = authentication.isAdmin();
+		ownerLabel.setVisible(showOwnerField);
+		ownerField.setVisible(showOwnerField);
 	}
 
 	private void clearFields() {
