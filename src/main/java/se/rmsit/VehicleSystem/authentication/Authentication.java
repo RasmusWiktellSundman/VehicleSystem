@@ -37,6 +37,10 @@ public class Authentication {
 		return loggedInUser;
 	}
 
+	public boolean isLoggedIn() {
+		return loggedInUser != null;
+	}
+
 	public void logout() {
 		loggedInUser = null;
 	}
