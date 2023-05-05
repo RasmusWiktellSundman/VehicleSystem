@@ -1,8 +1,8 @@
 package se.rmsit.VehicleSystem.entities.vehicles;
 
 import se.rmsit.VehicleSystem.FileHandler;
+import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.Fetchable;
-import se.rmsit.VehicleSystem.entities.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public abstract class Vehicle implements Fetchable {
 	private Calendar boughtDate;
 	private double purchasePrice;
 
-	public Vehicle(User owner, String registrationNumber, int maximumPassengers, int wheels, Calendar constructionDate, Calendar boughtDate, double purchasePrice) {
+	public Vehicle(Customer owner, String registrationNumber, int maximumPassengers, int wheels, Calendar constructionDate, Calendar boughtDate, double purchasePrice) {
 		setOwner(owner);
 		setRegistrationNumber(registrationNumber);
 		setMaximumPassengers(maximumPassengers);
@@ -48,7 +48,7 @@ public abstract class Vehicle implements Fetchable {
 		return (Vehicle) FileHandler.loadObject(registrationNumber, "vehicles");
 	}
 
-	public static List<Vehicle> getByOwner(User owner) throws IOException {
+	public static List<Vehicle> getByOwner(Customer owner) throws IOException {
 		List<Vehicle> vehicles = new ArrayList<>();
 		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
 			// Kollar om e-posten från den inlästa användaren är samma som den givna e-posten
@@ -142,15 +142,15 @@ public abstract class Vehicle implements Fetchable {
 		return getRegistrationNumber();
 	}
 
-	public User getOwner() {
+	public Customer getOwner() {
 		try {
-			return User.getById(ownerId);
+			return Customer.getById(ownerId);
 		} catch (IOException e) {
 			throw new RuntimeException("Tried getting Vehicle owner for a user id that doesn't exist");
 		}
 	}
 
-	public void setOwner(User owner) {
+	public void setOwner(Customer owner) {
 		this.ownerId = owner.getId();
 	}
 

@@ -1,5 +1,8 @@
 package se.rmsit.VehicleSystem.entities;
 
+import se.rmsit.VehicleSystem.FileHandler;
+
+import java.io.IOException;
 import java.util.Objects;
 
 public class Customer extends User {
@@ -25,6 +28,24 @@ public class Customer extends User {
 		setIsPublicAuthority(isPublicAuthority);
 		setPostcode(postcode);
 		setPhoneNumber(phoneNumber);
+	}
+
+	public static Customer getById(String id) throws IOException {
+		// Hämtar användare från persistent lagring
+		Fetchable fetchable = FileHandler.loadObject(id, "users");
+		if(fetchable instanceof Customer)
+			return (Customer) fetchable;
+		return null;
+	}
+
+	public static Customer getByEmail(String email) throws IOException {
+		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
+			// Kollar om e-posten från den inlästa användaren är samma som den givna e-posten
+			if(((User) fetchable).getEmail().equals(email) && fetchable instanceof Customer) {
+				return (Customer) fetchable;
+			}
+		}
+		return null;
 	}
 
 	@Override
