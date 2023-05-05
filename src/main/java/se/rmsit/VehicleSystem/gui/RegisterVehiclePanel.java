@@ -1,6 +1,7 @@
 package se.rmsit.VehicleSystem.gui;
 
 import se.rmsit.VehicleSystem.authentication.Authentication;
+import se.rmsit.VehicleSystem.entities.Admin;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.User;
 import se.rmsit.VehicleSystem.entities.vehicles.Bus;
@@ -31,6 +32,8 @@ public class RegisterVehiclePanel extends PanelContainer {
 	private JLabel success;
 	private JSpinner trunkVolumeSpinner;
 	private JLabel trunkVolumeLabel;
+	private JTextField ownerField;
+	private JLabel ownerLabel;
 
 	public RegisterVehiclePanel(Authentication authentication) {
 		this.authentication = authentication;
@@ -48,59 +51,69 @@ public class RegisterVehiclePanel extends PanelContainer {
 				boughtDate.setTime(dateFormat.parse(boughtDateField.getText()));
 				constructionDate.setTime(dateFormat.parse(constructionDateField.getText()));
 			} catch (ParseException ex) {
-				error.setText("Ogiltigt datum");
-				error.setVisible(true);
+				showError("Ogiltigt datum");
 				return;
 			}
 
 			try {
 				if(Vehicle.getByRegistrationNumber(registrationNumberField.getText()) != null) {
-					error.setText("Registreringsnumret är upptagen");
-					error.setVisible(true);
+					showError("Registreringsnumret är upptagen");
 					return;
 				}
 
 				// Hämtar kund
-				Customer customer = null;
+				Customer owner;
 				if(authentication.getUser() instanceof Customer) {
-					customer = (Customer) authentication.getUser();
+					owner = (Customer) authentication.getUser();
+				} else {
+					// Användaren är en administratör, använder ägarefält för att bestämma bilens ägare
+					owner = Customer.getByEmail(ownerField.getText());
+					if(owner == null) {
+						showError("Finns ingen kund med given email.");
+						return;
+					}
 				}
 
-				// Skapar ny bil
 				try {
 					if(vehicleType.getSelectedItem().equals("Bil")) {
+						// Skapar ny bil
 						Car car = new Car(
-								customer,
+								owner,
 								registrationNumberField.getText(),
 								(int) maximumPassengersSpinner.getValue(),
 								(int) wheelSpinner.getValue(),
 								constructionDate,
 								boughtDate,
 								(int) purchasePriceSpinner.getValue(),
-								customer.getAddress(),
+								owner.getAddress(),
 								(int) trunkVolumeSpinner.getValue()
 						);
 						car.save();
 					} else if(vehicleType.getSelectedItem().equals("Motorcykel")) {
+						// Skapar ny motorcykel
 						Motorcycle motorcycle = new Motorcycle(
-								customer,
+								owner,
 								registrationNumberField.getText(),
 								(int) maximumPassengersSpinner.getValue(),
 								(int) wheelSpinner.getValue(),
 								constructionDate,
 								boughtDate,
 								(int) purchasePriceSpinner.getValue(),
-								customer.getAddress()
+								owner.getAddress()
 						);
 						motorcycle.save();
 					} else if(vehicleType.getSelectedItem().equals("Buss")) {
-						if(!customer.isPublicAuthority()) {
-							error.setText("Endast kommuner kan registrera bussar");
-							error.setVisible(true);
+						// Skapar ny buss, om ägaren är en kommun
+						if(!owner.isPublicAuthority()) {
+							String errorMessage = "Endast kommuner kan registrera bussar";
+							if(authentication.getUser() instanceof Admin) {
+								errorMessage = "Ägaren måste vara en kommun för att kunna äga bussen";
+							}
+							showError(errorMessage);
 							return;
 						}
 						Bus bus = new Bus(
-								customer,
+								owner,
 								registrationNumberField.getText(),
 								(int) maximumPassengersSpinner.getValue(),
 								(int) wheelSpinner.getValue(),
@@ -121,11 +134,9 @@ public class RegisterVehiclePanel extends PanelContainer {
 				success.setVisible(true);
 				clearFields();
 			} catch (NoLoggedInUser ex) {
-				error.setText("Du måste vara inloggad");
-				error.setVisible(true);
+				showError("Fordon registrerat!");
 			} catch (IOException ex) {
-				error.setText("Misslyckades spara fordon");
-				error.setVisible(true);
+				showError("Misslyckades spara fordon");
 			}
 		});
 
@@ -133,6 +144,15 @@ public class RegisterVehiclePanel extends PanelContainer {
 		vehicleType.addActionListener(e -> {
 			updateVisibleFields();
 		});
+	}
+
+	/**
+	 * Visar error meddelande med hjälp av error JLabel
+	 * @param message Error-meddelandet som ska visas
+	 */
+	private void showError(String message) {
+		error.setText(message);
+		error.setVisible(true);
 	}
 
 	/**
@@ -145,6 +165,17 @@ public class RegisterVehiclePanel extends PanelContainer {
 			trunkVolumeLabel.setVisible(true);
 			trunkVolumeSpinner.setVisible(true);
 		}
+
+		// Visa endast ägarefältet för administratörer
+		ownerLabel.setVisible(false);
+		ownerField.setVisible(false);
+		try {
+			if(authentication.getUser() instanceof Admin) {
+				ownerLabel.setVisible(true);
+				ownerField.setVisible(true);
+			}
+		// Visar inte ägarefältet ifall ingen är inloggad
+		} catch (NoLoggedInUser ignored) {}
 	}
 
 	private void clearFields() {
@@ -168,12 +199,11 @@ public class RegisterVehiclePanel extends PanelContainer {
 		try {
 			User user = authentication.getUser();
 			vehicleType.removeAllItems();
-			if(user instanceof Customer) {
-				vehicleType.addItem("Bil");
-				vehicleType.addItem("Motorcykel");
-				if(((Customer) user).isPublicAuthority()) {
-					vehicleType.addItem("Buss");
-				}
+			vehicleType.addItem("Bil");
+			vehicleType.addItem("Motorcykel");
+			if(user instanceof Admin ||
+					user instanceof Customer && ((Customer) user).isPublicAuthority()) {
+				vehicleType.addItem("Buss");
 			}
 		} catch (NoLoggedInUser e) {
 			error.setText("Du måste vara inloggad!");

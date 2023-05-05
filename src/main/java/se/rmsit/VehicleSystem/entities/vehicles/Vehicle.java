@@ -4,6 +4,7 @@ import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.RepairLog;
+import se.rmsit.VehicleSystem.entities.User;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -54,6 +55,17 @@ public abstract class Vehicle implements Fetchable {
 		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
 			// Kollar om e-posten från den inlästa användaren är samma som den givna e-posten
 			if(((Vehicle) fetchable).getOwnerId().equals(owner.getId())) {
+				vehicles.add((Vehicle) fetchable);
+			}
+		}
+		return vehicles;
+	}
+
+	public static List<Vehicle> getAll() throws IOException {
+		List<Vehicle> vehicles = new ArrayList<>();
+		for (Fetchable fetchable : FileHandler.getAllObjects("vehicles")) {
+			// Lägger till fordon i listan, som sedan returneras
+			if(fetchable instanceof Vehicle) {
 				vehicles.add((Vehicle) fetchable);
 			}
 		}

@@ -163,4 +163,22 @@ class VehicleTest {
 		Calendar date = Calendar.getInstance();
 		assertThrows(IllegalArgumentException.class, () -> new TestVehicle(testCustomer, "ABCd123", 4, 4, date, date, 10000));
 	}
+
+	@Test
+	void canGetAllVehicles() throws IOException {
+		Customer testCustomer2 = new Customer("2", "Test2", "something", null, null, null, null, false, "test2@testing.se", "something");
+		testCustomer2.save();
+
+		// Skapar fordon
+		Calendar today = Calendar.getInstance();
+		Vehicle testVehicle = new TestVehicle(testCustomer, "ABC123", 4, 4, today, today, 100.1);
+		Vehicle testVehicle2 = new TestVehicle(testCustomer2, "ABC124", 4, 4, today, today, 13000.1);
+		Vehicle testVehicle3 = new TestVehicle(testCustomer, "ABC125", 2, 4, today, today, 11000.1);
+		testVehicle.save();
+		testVehicle2.save();
+		testVehicle3.save();
+
+		List<Vehicle> expected = List.of(testVehicle, testVehicle2, testVehicle3);
+		assertEquals(expected, Vehicle.getAll());
+	}
 }
