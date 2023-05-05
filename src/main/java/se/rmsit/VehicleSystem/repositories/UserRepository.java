@@ -24,8 +24,8 @@ public class UserRepository {
 	private void loadUsers() throws IOException {
 		// Populerar users array med data från persistent lagring
 		for (Fetchable fetchable : FileHandler.getAllObjects("users")) {
-			if(fetchable instanceof Customer) {
-				users.add((Customer) fetchable);
+			if(fetchable instanceof User) {
+				users.add((User) fetchable);
 			}
 		}
 	}

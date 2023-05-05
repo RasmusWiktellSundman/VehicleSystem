@@ -98,15 +98,15 @@ class UserRepositoryTest {
 	@Test
 	void canLoadAllFromFile() throws DuplicateEntityException, IOException {
 		// Använder Customer, då UserRepository inläsning av alla användare från filer inte stödjer TestUser
-		Customer testCustomer = new Customer("1", "Customer", null, null, null, null, null, false, "customer@testing.se", "no_hashing");
-		Customer testCustomer2 = new Customer("2", "Customer", null, null, null, null, null, false, "customer2@testing.se", "no_hashing");
-		userRepository.update(testCustomer);
-		userRepository.update(testCustomer2);
+		User testUser = new TestUser("1", "Test", "something", "test@testing.se", "aHash");
+		User testUser2 = new TestUser("2", "Test2", "something", "test2@testing.se", "aHash");
+		userRepository.update(testUser);
+		userRepository.update(testUser2);
 
 		// Skapar nytt repository för att ladda in från fil
 		userRepository = new UserRepository();
 
-		List<User> expected = List.of(testCustomer, testCustomer2);
+		List<User> expected = List.of(testUser, testUser2);
 		assertIterableEquals(expected, userRepository.getAll());
 	}
 
