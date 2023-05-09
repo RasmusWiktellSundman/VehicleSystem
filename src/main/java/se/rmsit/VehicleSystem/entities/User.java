@@ -221,4 +221,8 @@ public abstract class User implements Fetchable {
 		}
 		this.hashedPassword = hashedPassword;
 	}
+
+	public String getFullName() {
+		return firstName + (lastName != null ? " "+lastName : "");
+	}
 }

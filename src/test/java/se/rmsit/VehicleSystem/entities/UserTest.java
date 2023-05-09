@@ -106,4 +106,12 @@ class UserTest {
 		assertDoesNotThrow(() -> new TestUser("Testing", "something", "testTesting@test.se", "password"));
 		assertDoesNotThrow(() -> new TestUser("Testing", "something", "testTestingåäöÅÄÖ@test.se", "password"));
 	}
+
+	@Test
+	void canGetFullName() {
+		User testUser1 = new TestUser("Test", "something", "test@testing.se", "aHash");
+		User testUser2 = new TestUser("Test", null, "test@testing.se", "aHash");
+		assertEquals("Test something", testUser1.getFullName());
+		assertEquals("Test", testUser2.getFullName());
+	}
 }
