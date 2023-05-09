@@ -19,6 +19,7 @@ public class MainFrame extends JFrame {
 	private JButton logoutBtn;
 	private JButton registerVehicleBtn;
 	private JButton customersBtn;
+	private JButton repairLogBtn;
 
 	private List<JButton> buttons = new ArrayList<>();
 	private Map<Panels, PanelContainer> panelContainers = new HashMap<>();
@@ -60,6 +61,7 @@ public class MainFrame extends JFrame {
 		panelContainers.put(Panels.VEHICLES, new VehiclesPanel(authentication));
 		panelContainers.put(Panels.REGISTER_VEHICLE, new RegisterVehiclePanel(authentication));
 		panelContainers.put(Panels.CUSTOMERS, new CustomersPanel(authentication));
+		panelContainers.put(Panels.REPAIR_LOGS, new RepairLogPanel(authentication));
 		panelContainers.forEach((panel, panelContainer) -> content.add(panelContainer.getPanel(), panel.name()));
 		setContentPanel(Panels.LOGIN);
 
@@ -74,6 +76,7 @@ public class MainFrame extends JFrame {
 		buttons.add(logoutBtn);
 		buttons.add(registerVehicleBtn);
 		buttons.add(customersBtn);
+		buttons.add(repairLogBtn);
 	}
 
 	private void registerListeners() {
@@ -82,6 +85,7 @@ public class MainFrame extends JFrame {
 		vehicleBtn.addActionListener(e -> setContentPanel(Panels.VEHICLES));
 		registerVehicleBtn.addActionListener(e -> setContentPanel(Panels.REGISTER_VEHICLE));
 		customersBtn.addActionListener(e -> setContentPanel(Panels.CUSTOMERS));
+		repairLogBtn.addActionListener(e -> setContentPanel(Panels.REPAIR_LOGS));
 		logoutBtn.addActionListener(e -> {
 			authentication.logout();
 			setContentPanel(Panels.LOGIN);
@@ -112,6 +116,7 @@ public class MainFrame extends JFrame {
 			vehicleBtn.setVisible(true);
 			logoutBtn.setVisible(true);
 			registerVehicleBtn.setVisible(true);
+			repairLogBtn.setVisible(true);
 
 			// Visar knappar som endast administratörer ska se
 			if(authentication.isAdmin()) {
