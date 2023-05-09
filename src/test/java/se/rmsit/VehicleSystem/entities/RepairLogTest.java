@@ -190,4 +190,11 @@ class RepairLogTest {
 		List<RepairLog> expected = List.of(repairLogExpected1, repairLogExpected2, repairLogExpected3);
 		assertEquals(expected, RepairLog.getAll());
 	}
+
+	@Test
+	void cantCreateRepairLogWithEmptyDescription() {
+		Calendar today = Calendar.getInstance();
+		assertThrows(IllegalArgumentException.class, () -> new RepairLog(today, null, testCustomer, testVehicle));
+		assertThrows(IllegalArgumentException.class, () -> new RepairLog(today, "", testCustomer, testVehicle));
+	}
 }

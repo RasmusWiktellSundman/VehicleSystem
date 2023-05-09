@@ -189,6 +189,9 @@ public class RepairLog implements Fetchable {
 	}
 
 	public void setDescription(String description) {
+		if(description == null || description.isEmpty()) {
+			throw new IllegalArgumentException("Beskrivning är obligatorisk");
+		}
 		this.description = description;
 	}
 
