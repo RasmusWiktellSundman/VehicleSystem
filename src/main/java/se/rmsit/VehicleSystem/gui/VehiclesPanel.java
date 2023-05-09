@@ -21,6 +21,10 @@ public class VehiclesPanel extends PanelContainer {
 	private JButton filterBtn;
 	private JTextField constructionYearField;
 	private JLabel filterError;
+	private JTextField registrationNumberField;
+	private JTextField newOwnerField;
+	private JButton changeOwnerBtn;
+	private JLabel success;
 
 	public VehiclesPanel(Authentication authentication) {
 		this.authentication = authentication;
@@ -37,6 +41,53 @@ public class VehiclesPanel extends PanelContainer {
 			}
 			render();
 		});
+
+		changeOwnerBtn.addActionListener(e -> changeOwner());
+	}
+
+	private void changeOwner() {
+		// Återställ status meddelanden
+		error.setVisible(false);
+		success.setVisible(false);
+
+		try {
+			Vehicle vehicle = Vehicle.getByRegistrationNumber(registrationNumberField.getText());
+			if(vehicle == null) {
+				showError("Finns inget fordon med angivet registreringsnummer");
+				return;
+			}
+
+			// Kontrollerar att användaren har behörighet att ändra ägare (äger fordonet eller är admin)
+			if(!vehicle.getOwnerId().equals(authentication.getUser().getId()) && !authentication.isAdmin()) {
+				showError("Åtkomst nekad!");
+				return;
+			}
+
+			// Hämtar ny ägare
+			Customer customer = Customer.getByEmail(newOwnerField.getText());
+			if(customer == null) {
+				showError("Det finns ingen ägare med angiven e-post");
+				return;
+			}
+
+			try {
+				vehicle.setOwner(customer);
+				vehicle.save();
+			} catch (IllegalArgumentException ex) {
+				showError(ex.getMessage());
+				return;
+			}
+
+			// Lyckades ändra ägare
+			success.setText("Ägare ändrad!");
+			success.setVisible(true);
+			render();
+		} catch (IOException e) {
+			showError("Misslyckades läsa från fil");
+		} catch (NoLoggedInUser noLoggedInUser) {
+			showError("Du måste vara inloggad!");
+		}
+
 	}
 
 	@Override
@@ -84,8 +135,7 @@ public class VehiclesPanel extends PanelContainer {
 				});
 			}
 		} catch (IOException e) {
-			error.setText("Misslyckades läsa in fordon");
-			error.setVisible(true);
+			showError("Misslyckades läsa in fordon");
 			return;
 		}
 
@@ -121,12 +171,16 @@ public class VehiclesPanel extends PanelContainer {
 				});
 			}
 		} catch (IOException e) {
-			error.setText("Misslyckades läsa in fordon");
-			error.setVisible(true);
+			showError("Misslyckades läsa in fordon");
 			return;
 		}
 
 		table.setModel(model);
+	}
+
+	private void showError(String message) {
+		error.setText(message);
+		error.setVisible(true);
 	}
 
 	public JPanel getPanel() {
