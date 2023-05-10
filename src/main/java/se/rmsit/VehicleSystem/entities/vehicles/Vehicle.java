@@ -4,11 +4,13 @@ import se.rmsit.VehicleSystem.FileHandler;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.Fetchable;
 import se.rmsit.VehicleSystem.entities.RepairLog;
-import se.rmsit.VehicleSystem.entities.User;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class Vehicle implements Fetchable {
 	// Sparar endast ägarens id och inte hela objektet för att undvika synkroniseringsfel mellan persistent lagring och minne
@@ -110,6 +112,7 @@ public abstract class Vehicle implements Fetchable {
 	 * @return Fordonets värde
 	 */
 	public double getValue() {
+		// Hämtar fordonets inköpspris
 		double value = getPurchasePrice();
 		List<RepairLog> repairs = RepairLog.getAllByVehicle(this);
 		Calendar now = Calendar.getInstance();
@@ -121,13 +124,28 @@ public abstract class Vehicle implements Fetchable {
 		year_end.setTimeInMillis(getConstructionDate().getTimeInMillis());
 		year_end.add(Calendar.YEAR, 1);
 
-		// Loopar så länge datumet är före nu, varje varv motsvarar ett fullständigt år
+		// Loopar så länge year_end är före nuvarande tid, varje varv motsvarar ett fullständigt år
 		while(year_end.before(now) || year_end.equals(now)) {
-			// Beräknar antal reparationer under året
-			long amountOfRepairs = repairs.stream().filter(
-					repairLog -> year_start.equals(repairLog.getDate()) ||
-							(year_start.before(repairLog.getDate()) && year_end.after(repairLog.getDate()))
-			).count();
+			long amountOfRepairs;
+
+			// Kontrollerar om giltighetstiden går ut under året
+			if(year_start.equals(warrantyPeriodEnd) ||
+					(year_start.before(warrantyPeriodEnd) && year_end.after(warrantyPeriodEnd))) {
+				// Giltighetstiden har gått ut, sätter värdet till 20% av inköpspris
+				value = 0.2 * purchasePrice;
+				// Beräknar antal reparationer från garantitiden tog slut tills årets slut
+				// Ej intresserad av reparationer som gjordes tidigare under året, eftersom priset sätts till 20% av inköpspris när garantin tar slut
+				amountOfRepairs = repairs.stream().filter(
+						repairLog -> warrantyPeriodEnd.equals(repairLog.getDate()) ||
+								(warrantyPeriodEnd.before(repairLog.getDate()) && year_end.after(repairLog.getDate()))
+				).count();
+			} else {
+				// Beräknar antal reparationer under året
+				amountOfRepairs = repairs.stream().filter(
+						repairLog -> year_start.equals(repairLog.getDate()) ||
+								(year_start.before(repairLog.getDate()) && year_end.after(repairLog.getDate()))
+				).count();
+			}
 
 			// Ökar värdet med 20% för varje reparation
 			value *= Math.pow(1.2, amountOfRepairs);
@@ -145,10 +163,23 @@ public abstract class Vehicle implements Fetchable {
 			year_end.add(Calendar.YEAR, 1);
 		}
 
-		// Lägger till värdet för reparationer som utförts under senaste ofullständiga år
-		long amountOfRepairs = repairs.stream().filter(
-				repairLog -> year_start.equals(repairLog.getDate()) || year_start.before(repairLog.getDate())
-		).count();
+		long amountOfRepairs;
+		// Kontrollerar om garantitiden gick ut under det ofullständiga året
+		if(year_start.equals(warrantyPeriodEnd) || year_start.before(warrantyPeriodEnd) && now.after(warrantyPeriodEnd)) {
+			// Sätter värdet till 20% av inköpspris
+			value = 0.2 * purchasePrice;
+			// Beräknar antal reparationer från garantitiden tog slut tills årets slut
+			// Ej intresserad av reparationer som gjordes tidigare under året, eftersom priset sätts till 20% av inköpspris när garantin tar slut
+			amountOfRepairs = repairs.stream().filter(
+					repairLog -> warrantyPeriodEnd.equals(repairLog.getDate()) || warrantyPeriodEnd.before(repairLog.getDate())
+			).count();
+		} else {
+			// Lägger till värdet för reparationer som utförts under senaste ofullständiga år
+			amountOfRepairs = repairs.stream().filter(
+					repairLog -> year_start.equals(repairLog.getDate()) || year_start.before(repairLog.getDate())
+			).count();
+		}
+
 		// Ökar värdet med 20% för varje reparation
 		value *= Math.pow(1.2, amountOfRepairs);
 

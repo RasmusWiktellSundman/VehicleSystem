@@ -111,7 +111,7 @@ public class VehiclesPanel extends PanelContainer {
 
 	private void renderCustomerVehicles(Customer customer) {
 		// Sätter rubriker för tabellen
-		String[] columnNames = {"Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Giltighet upphör"};
+		String[] columnNames = {"Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Nuvarande värde", "Giltighet upphör"};
 		DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
 		// Lägger till data
@@ -131,6 +131,7 @@ public class VehiclesPanel extends PanelContainer {
 						dateFormat.format(vehicle.getConstructionDate().getTime()),
 						dateFormat.format(vehicle.getBoughtDate().getTime()),
 						String.valueOf(vehicle.getPurchasePrice()),
+						String.format("%.2f", vehicle.getValue()),
 						dateFormat.format(vehicle.getWarrantyPeriodEnd().getTime())
 				});
 			}
@@ -145,7 +146,7 @@ public class VehiclesPanel extends PanelContainer {
 
 	private void renderAllVehicles() {
 		// Sätter rubriker för tabellen
-		String[] columnNames = {"Ägare", "Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Giltighet upphör"};
+		String[] columnNames = {"Ägare", "Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Nuvarande värde", "Giltighet upphör"};
 		DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
 		// Lägger till data
@@ -167,6 +168,7 @@ public class VehiclesPanel extends PanelContainer {
 						dateFormat.format(vehicle.getConstructionDate().getTime()),
 						dateFormat.format(vehicle.getBoughtDate().getTime()),
 						String.valueOf(vehicle.getPurchasePrice()),
+						String.format("%.2f", vehicle.getValue()),
 						dateFormat.format(vehicle.getWarrantyPeriodEnd().getTime())
 				});
 			}

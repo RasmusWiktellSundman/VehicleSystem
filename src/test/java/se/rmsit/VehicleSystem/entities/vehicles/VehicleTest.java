@@ -159,6 +159,51 @@ class VehicleTest {
 	}
 
 	@Test
+	void canGetValue5() throws IOException {
+		// Kollar att värdet av ett fem år gammalt fordon med en reparation före garantitid och en efter. Värdet ska vara 21,60% ((1 * 0.2 * 1.2 * 0.9) = 0.216)
+		Calendar date = Calendar.getInstance();
+		date.add(Calendar.YEAR, -5);
+		Calendar date2 = Calendar.getInstance();
+		date2.add(Calendar.DAY_OF_YEAR, -50);
+		Calendar date3 = Calendar.getInstance();
+		date3.add(Calendar.DAY_OF_YEAR, -10);
+		Calendar date4 = Calendar.getInstance();
+		date4.add(Calendar.DAY_OF_YEAR, -80);
+
+		Vehicle testVehicle = new TestVehicle(testCustomer, "ABC123", 4, 4, date, date, 10000);
+		testVehicle.setWarrantyPeriodEnd(date2);
+		testVehicle.save();
+
+		testVehicle.addRepair("Test", date3);
+		testVehicle.addRepair("Test2", date4);
+
+		assertEquals(2160, testVehicle.getValue());
+	}
+
+	@Test
+	void canGetValue6() throws IOException {
+		// Kollar att värdet av ett fem och ett halvt år gammalt fordon med två reparationer efter garantitiden. Efter garantitiden gått ut har det passerat ett helt år och några månader Värdet ska vara 21,60% ((1 * 0.2 * 0.9 * 1.2^2) = 0.2592)
+		Calendar date = Calendar.getInstance();
+		date.add(Calendar.YEAR, -5);
+		date.add(Calendar.MONTH, -6);
+		Calendar date2 = Calendar.getInstance();
+		date2.add(Calendar.DAY_OF_YEAR, -400);
+		Calendar date3 = Calendar.getInstance();
+		date3.add(Calendar.DAY_OF_YEAR, -10);
+		Calendar date4 = Calendar.getInstance();
+		date4.add(Calendar.DAY_OF_YEAR, -48);
+
+		Vehicle testVehicle = new TestVehicle(testCustomer, "ABC123", 4, 4, date, date, 10000);
+		testVehicle.setWarrantyPeriodEnd(date2);
+		testVehicle.save();
+
+		testVehicle.addRepair("Test", date3);
+		testVehicle.addRepair("Test2", date4);
+
+		assertEquals(2592, testVehicle.getValue());
+	}
+
+	@Test
 	void cantSetInvalidRegistrationNumber() {
 		Calendar date = Calendar.getInstance();
 		assertThrows(IllegalArgumentException.class, () -> new TestVehicle(testCustomer, "ABCd123", 4, 4, date, date, 10000));
