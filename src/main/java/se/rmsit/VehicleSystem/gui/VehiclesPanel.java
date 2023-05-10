@@ -70,8 +70,17 @@ public class VehiclesPanel extends PanelContainer {
 				return;
 			}
 
+			// Kontrollerar om nya ägaren är samma som gamla ägaren, kan inte byta till samma ägare
+			if(vehicle.getOwner().equals(customer)) {
+				showError("Du kan inte byta till ägaren som redan äger fordonet");
+				return;
+			}
+
 			try {
+				// Byter ägare
 				vehicle.setOwner(customer);
+				// Uppdaterar köpdatum till nu
+				vehicle.setBoughtDate(Calendar.getInstance());
 				vehicle.save();
 			} catch (IllegalArgumentException ex) {
 				showError(ex.getMessage());
