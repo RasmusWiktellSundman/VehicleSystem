@@ -4,6 +4,7 @@ import se.rmsit.VehicleSystem.authentication.Authentication;
 import se.rmsit.VehicleSystem.entities.Admin;
 import se.rmsit.VehicleSystem.entities.Customer;
 import se.rmsit.VehicleSystem.entities.User;
+import se.rmsit.VehicleSystem.entities.vehicles.Car;
 import se.rmsit.VehicleSystem.entities.vehicles.Vehicle;
 import se.rmsit.VehicleSystem.exceptions.NoLoggedInUser;
 
@@ -120,7 +121,7 @@ public class VehiclesPanel extends PanelContainer {
 
 	private void renderCustomerVehicles(Customer customer) {
 		// Sätter rubriker för tabellen
-		String[] columnNames = {"Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Nuvarande värde", "Giltighet upphör"};
+		String[] columnNames = {"Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Bagageutrymme", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Nuvarande värde", "Giltighet upphör"};
 		DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
 		// Lägger till data
@@ -132,11 +133,14 @@ public class VehiclesPanel extends PanelContainer {
 				if(!filterYear.isEmpty() &&
 						vehicle.getConstructionDate().get(Calendar.YEAR) != Integer.parseInt(filterYear))
 					continue;
+
+				boolean isCar = vehicle instanceof Car;
 				model.addRow(new String[]{
 						vehicle.getClass().getSimpleName(),
 						vehicle.getRegistrationNumber(),
 						String.valueOf(vehicle.getMaximumPassengers()),
 						String.valueOf(vehicle.getWheels()),
+						isCar ? String.valueOf(((Car) vehicle).getTrunkVolume()) : "-",
 						dateFormat.format(vehicle.getConstructionDate().getTime()),
 						dateFormat.format(vehicle.getBoughtDate().getTime()),
 						String.valueOf(vehicle.getPurchasePrice()),
@@ -155,7 +159,7 @@ public class VehiclesPanel extends PanelContainer {
 
 	private void renderAllVehicles() {
 		// Sätter rubriker för tabellen
-		String[] columnNames = {"Ägare", "Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Nuvarande värde", "Giltighet upphör"};
+		String[] columnNames = {"Ägare", "Fordonstyp", "Registreringsnummer", "Passagerare", "Hjul", "Bagageutrymme", "Tillverkningsdatum", "Köpdatum", "Inköpspris", "Nuvarande värde", "Giltighet upphör"};
 		DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
 		// Lägger till data
@@ -168,17 +172,19 @@ public class VehiclesPanel extends PanelContainer {
 						vehicle.getConstructionDate().get(Calendar.YEAR) != Integer.parseInt(filterYear))
 					continue;
 				String ownerName = vehicle.getOwner().getFirstName() + " " + (vehicle.getOwner().getLastName() != null ? vehicle.getOwner().getLastName() : "");
-						model.addRow(new String[]{
-						ownerName,
-						vehicle.getClass().getSimpleName(),
-						vehicle.getRegistrationNumber(),
-						String.valueOf(vehicle.getMaximumPassengers()),
-						String.valueOf(vehicle.getWheels()),
-						dateFormat.format(vehicle.getConstructionDate().getTime()),
-						dateFormat.format(vehicle.getBoughtDate().getTime()),
-						String.valueOf(vehicle.getPurchasePrice()),
-						String.format("%.2f", vehicle.getValue()),
-						dateFormat.format(vehicle.getWarrantyPeriodEnd().getTime())
+				boolean isCar = vehicle instanceof Car;
+				model.addRow(new String[]{
+					ownerName,
+					vehicle.getClass().getSimpleName(),
+					vehicle.getRegistrationNumber(),
+					String.valueOf(vehicle.getMaximumPassengers()),
+					String.valueOf(vehicle.getWheels()),
+					isCar ? String.valueOf(((Car) vehicle).getTrunkVolume()) : "-",
+					dateFormat.format(vehicle.getConstructionDate().getTime()),
+					dateFormat.format(vehicle.getBoughtDate().getTime()),
+					String.valueOf(vehicle.getPurchasePrice()),
+					String.format("%.2f", vehicle.getValue()),
+					dateFormat.format(vehicle.getWarrantyPeriodEnd().getTime())
 				});
 			}
 		} catch (IOException e) {
